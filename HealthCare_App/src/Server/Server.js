@@ -14,7 +14,7 @@ const GoogleAuthLogin = async (response) => {
         { token: credential },
         { withCredentials: true }
       );
-      console.log(data?.data?.user);
+      // console.log(data?.data?.user);
       return data?.data?.user;
     } catch (err) {
       console.log('Google authentication failed or user already exists', err);

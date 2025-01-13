@@ -99,7 +99,7 @@ function Login() {
 
                     <GoogleLogin
                         onSuccess={(response) => {
-                            console.log(response);
+                            // console.log(response);
                             handleGoogleLogin(response);
                         }}
                         // onError={() => setError('Google login failed')}
