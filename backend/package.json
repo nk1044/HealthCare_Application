@@ -1,0 +1,24 @@
+{
+  "name": "healthcare_application",
+  "version": "1.0.0",
+  "description": "This healthcare telemedicine portal for the IITJ community offers easy access to medical services like appointment scheduling, online consultations, health records management, and educational resources through a user-friendly interface.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Neeraj Kumar",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "google-auth-library": "^9.15.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.4",
+    "nodemon": "^3.1.9"
+  }
+}
