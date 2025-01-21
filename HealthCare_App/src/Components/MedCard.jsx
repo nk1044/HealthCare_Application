@@ -1,16 +1,17 @@
 import React from 'react'
 
 function MedCard({
+    id,
     title,
     description,
-    imgsrc
+    image_url
 }) {
   return (
       <div className="max-w-sm rounded overflow-hidden shadow-lg border transition-transform transform hover:scale-105">
           <div className='flex justify-center mt-1'>
           <img 
             className="w-48 " 
-            src={imgsrc} 
+            src={image_url} 
             alt="medcard" />
           </div>
             

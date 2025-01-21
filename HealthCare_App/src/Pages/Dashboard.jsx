@@ -1,36 +1,35 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import MedCard from '../Components/MedCard';
 import SecondCard from '../Components/SecondCard';
 import ThirdCard from '../Components/ThirdCard';
-import { use } from 'react';
+import { GetHomePageData } from '../Server/Server';
 
 function Dashboard() {
-  const medCardsData = [
-    { title: "Card 1", description: "This is a card description", imgsrc: "/iitjlogo1.png" },
-    { title: "Card 2", description: "Another card description", imgsrc: "/iitjlogo1.png" },
-    { title: "Card 3", description: "More card description", imgsrc: "/iitjlogo1.png" },
-  ];
 
-  const secondCardsData = [
-    { title: "Specialist 1", description: "Expert in field", imgsrc: "/iitjlogo1.png" },
-    { title: "Specialist 2", description: "Trusted advice", imgsrc: "/iitjlogo1.png" },
-    { title: "Specialist 3", description: "Reliable care", imgsrc: "/iitjlogo1.png" },
-    { title: "Specialist 4", description: "Quick help", imgsrc: "/iitjlogo1.png" },
-    { title: "Specialist 5", description: "Comprehensive support", imgsrc: "/iitjlogo1.png" },
-    { title: "Specialist 6", description: "Friendly assistance", imgsrc: "/iitjlogo1.png" },
-  ];
-
-  const thirdCardsData = [
-    { title: "Clinic 1", imgsrc: "/iitjlogo.png" },
-    { title: "Clinic 2", imgsrc: "/iitjlogo.png" },
-    { title: "Clinic 3", imgsrc: "/iitjlogo.png" },
-    { title: "Clinic 4", imgsrc: "/iitjlogo.png" },
-    { title: "Clinic 5", imgsrc: "/iitjlogo.png" },
-    { title: "Clinic 6", imgsrc: "/iitjlogo.png" },
-  ];
+  const [medCardsData, setMedCardsData] = useState([]);
+  const [secondCardsData, setSecondCardsData] = useState([]);
+  const [thirdCardsData, setThirdCardsData] = useState([]);
 
 
-  
+
+  const getPageData = async () => {
+    try {
+      const data = await GetHomePageData();
+      // console.log("page data:- ", data);
+      setMedCardsData(data?.featured_services);
+      setSecondCardsData(data?.partner_clinics);
+      setThirdCardsData(data?.specialists);
+      // return data;
+    } catch (err) {
+      console.log('GetHomePageData failed', err);
+    }
+  }
+
+  useEffect(() => {
+    getPageData();
+  }
+  , []);
+
 
   return (
     <div className="bg-gray-50 min-h-screen">
