@@ -40,7 +40,7 @@ function Dashboard() {
           <p className="text-gray-500">Explore our top services for your health needs.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {medCardsData.map((card, index) => (
+          {medCardsData?.map((card, index) => (
             <MedCard key={index} {...card} />
           ))}
         </div>
@@ -54,7 +54,7 @@ function Dashboard() {
           <p className="text-gray-500">Highly qualified specialists ready to help you.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {secondCardsData.map((card, index) => (
+          {secondCardsData?.map((card, index) => (
             <SecondCard key={index} {...card} />
           ))}
         </div>
@@ -79,7 +79,7 @@ function Dashboard() {
           <p className="text-gray-500">Trusted clinics ensuring quality healthcare services.</p>
         </div>
         <div className="flex flex-wrap justify-center gap-6 max-w-6xl mx-auto">
-          {thirdCardsData.map((card, index) => (
+          {thirdCardsData?.map((card, index) => (
             <ThirdCard key={index} {...card} />
           ))}
         </div>
