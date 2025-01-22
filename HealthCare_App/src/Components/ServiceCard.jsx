@@ -8,7 +8,7 @@ function ServiceCard({
     return (
         <div className="bg-gray-100 rounded-lg shadow-lg p-6 text-center">
             <img
-                src={imgsrc || "/pharmacy.png"}
+                src={imgsrc}
                 alt="Pharmacy"
                 className="w-20 h-20 mx-auto mb-4"
             />

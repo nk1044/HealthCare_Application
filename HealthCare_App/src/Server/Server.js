@@ -35,10 +35,31 @@ const LogOut = async () => {
 const GetHomePageData = async () => {
   try {
     const response = await axios.get(`${backend_url}/`, { withCredentials: true });
-    // console.log("logout data:- ", data);
-    return response.data;
+    // console.log("home page data:- ", response);
+    return response?.data;
   } catch (err) {
     console.log('GetHomePageData failed', err);
+  }
+}
+
+const GetAboutPageData = async () => {
+  try {
+    const response = await axios.get(`${backend_url}/about/`, { withCredentials: true });
+    // console.log("about page data:- ", response);
+    return response?.data?.aboutpage_team
+    ;
+  } catch (err) {
+    console.log('GetAboutPageData failed', err);
+  }
+}
+
+const GetServicesPageData = async () => {
+  try {
+    const response = await axios.get(`${backend_url}/services/`, { withCredentials: true });
+    // console.log("services page data:- ", response);
+    return response?.data?.services;
+  } catch (err) {
+    console.log('GetServicesPageData failed', err);
   }
 }
 
@@ -47,5 +68,7 @@ const GetHomePageData = async () => {
 export {
   GetHomePageData,
   GoogleAuthLogin,
-  LogOut
+  LogOut,
+  GetAboutPageData,
+  GetServicesPageData
 };

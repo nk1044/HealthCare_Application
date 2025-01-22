@@ -17,8 +17,8 @@ function Dashboard() {
       const data = await GetHomePageData();
       // console.log("page data:- ", data);
       setMedCardsData(data?.featured_services);
-      setSecondCardsData(data?.partner_clinics);
-      setThirdCardsData(data?.specialists);
+      setSecondCardsData(data?.specialists);
+      setThirdCardsData(data?.partner_clinics);
       // return data;
     } catch (err) {
       console.log('GetHomePageData failed', err);

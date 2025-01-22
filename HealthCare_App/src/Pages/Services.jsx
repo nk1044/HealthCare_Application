@@ -1,36 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ServiceCard from '../Components/ServiceCard';
 import { useNavigate } from 'react-router-dom';
+import {GetServicesPageData} from '../Server/Server.js'
 
 function Services() {
   const navigate = useNavigate();
+  
   // Array of services
-  const services = [
-    {
-      title: 'General Checkup',
-      description: 'Comprehensive health checkup for all',
-    },
-    {
-      title: 'Dental Care',
-      description: 'Specialized dental care for all dental problems.',
-    },
-    {
-      title: 'Eye Care',
-      description: 'Advanced eye care for all age groups.',
-    },
-    {
-      title: 'General Checkup',
-      description: 'Comprehensive health checkup for all',
-    },
-    {
-      title: 'Dental Care',
-      description: 'Specialized dental care for all dental problems.',
-    },
-    {
-      title: 'Eye Care',
-      description: 'Advanced eye care for all age groups.',
-    },
-  ];
+
+
+  const [pageData, setPageData] = useState([]);
+
+  const getPageData = async () => {
+    try {
+      const data = await GetServicesPageData();
+      // console.log("page data:- ", data);
+      setPageData(data);
+      // return data;
+    } catch (err) {
+      console.log('GetHomePageData failed', err);
+    }
+  }
+
+  useEffect(() => {
+    getPageData();
+  }
+  , []);
 
 
   return (
@@ -47,8 +42,9 @@ function Services() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Service 1 */}
 
-          {services.map((service, index) => (
-            <ServiceCard key={index} title={service.title} description={service.description} />
+          {pageData?.map((service, index) => (
+            <ServiceCard key={index} title={service?.title} description={service?.description} imgsrc={service?.
+              image_url} />
           ))}
 
         </div>
