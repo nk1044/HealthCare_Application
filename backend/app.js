@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
 import authRouter from './src/routes/auth.route.js';
+import queueRouter from './src/routes/queue.route.js';
 import AdminJS from 'adminjs'
 import AdminJSExpress from '@adminjs/express'
 import * as AdminJSMongoose from '@adminjs/mongoose'
@@ -46,5 +47,7 @@ app.get('/health-check', (req, res) => {
 
 
 app.use('/api/users', authRouter);
+app.use('/api/queue', queueRouter);
+
 
 export default app;

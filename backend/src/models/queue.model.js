@@ -6,9 +6,22 @@ const queueSchema = new Schema({
         default: 'ENT',
         enum: ['Dentist', 'ENT', 'General'],
     },
-    users:{
-        type: [Schema.Types.ObjectId],
-        ref: 'User',
+    Entries:{
+        type: [{
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            tag: {
+                type: String,
+                default: 'ENT',
+                enum: ['Dentist', 'ENT', 'General'],
+            },
+            description: {
+                type: String,
+                default: 'No description provided',
+            },
+        }],
         default: []
     }
 }, {timestamps: true});
