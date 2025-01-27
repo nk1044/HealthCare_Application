@@ -7,6 +7,8 @@ import AdminJS from 'adminjs'
 import AdminJSExpress from '@adminjs/express'
 import * as AdminJSMongoose from '@adminjs/mongoose'
 import { User } from './src/models/user.model.js';
+import { Queue } from './src/models/queue.model.js';
+
 
 
 AdminJS.registerAdapter({
@@ -15,7 +17,7 @@ AdminJS.registerAdapter({
 })
 
 const adminOptions = {
-    resources: [User],
+    resources: [User, Queue],
 }
 
 const app = express();
