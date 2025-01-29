@@ -24,20 +24,16 @@ const adminOptions = {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-const admin = new AdminJS(adminOptions)
+app.use(cookieParser());
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+}));
 
+const admin = new AdminJS(adminOptions)
 const adminRouter = AdminJSExpress.buildRouter(admin)
 app.use(admin.options.rootPath, adminRouter)
 
-
-
-
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-    origin: 'https://remotecare.netlify.app',
-    credentials: true,
-}));
 
 
 
