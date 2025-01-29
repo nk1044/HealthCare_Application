@@ -34,7 +34,7 @@ const LogOut = async () => {
 
 const GetHomePageData = async () => {
   try {
-    const response = await axios.get(`${backend_url}/`, { withCredentials: true });
+    const response = await axios.get(`${backend_url}/api/home/dashboard`, { withCredentials: true });
     // console.log("home page data:- ", response);
     return response?.data;
   } catch (err) {
@@ -44,9 +44,9 @@ const GetHomePageData = async () => {
 
 const GetAboutPageData = async () => {
   try {
-    const response = await axios.get(`${backend_url}/about/`, { withCredentials: true });
+    const response = await axios.get(`${backend_url}/api/home/about`, { withCredentials: true });
     // console.log("about page data:- ", response);
-    return response?.data?.aboutpage_team
+    return response?.data
     ;
   } catch (err) {
     console.log('GetAboutPageData failed', err);
@@ -55,9 +55,9 @@ const GetAboutPageData = async () => {
 
 const GetServicesPageData = async () => {
   try {
-    const response = await axios.get(`${backend_url}/services/`, { withCredentials: true });
+    const response = await axios.get(`${backend_url}/api/home/services`, { withCredentials: true });
     // console.log("services page data:- ", response);
-    return response?.data?.services;
+    return response?.data;
   } catch (err) {
     console.log('GetServicesPageData failed', err);
   }

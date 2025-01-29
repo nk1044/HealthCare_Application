@@ -4,12 +4,15 @@ import cors from 'cors';
 import 'dotenv/config';
 import authRouter from './src/routes/auth.route.js';
 import queueRouter from './src/routes/queue.route.js';
+import homeRouter from './src/routes/web.route.js';
 import AdminJS from 'adminjs'
 import AdminJSExpress from '@adminjs/express'
 import * as AdminJSMongoose from '@adminjs/mongoose'
 import { User } from './src/models/user.model.js';
 import { Queue } from './src/models/queue.model.js';
-
+import {FeaturedServices, Specialist, PartnerClinic} from './src/models/DashBoard.model.js';
+import {AboutPageTeam} from './src/models/About.model.js';
+import {Service} from './src/models/Service.model.js';
 
 
 AdminJS.registerAdapter({
@@ -18,7 +21,12 @@ AdminJS.registerAdapter({
 })
 
 const adminOptions = {
-    resources: [User, Queue],
+    resources: [
+        User, Queue, 
+        FeaturedServices, Specialist, PartnerClinic,
+        AboutPageTeam,
+        Service
+    ],
 }
 
 const app = express();
@@ -26,7 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
+    // origin: process.env.FRONTEND_URL,
+    origin: 'http://localhost:5173',
     credentials: true,
 }));
 
@@ -44,6 +53,7 @@ app.get('/health-check', (req, res) => {
 
 app.use('/api/users', authRouter);
 app.use('/api/queue', queueRouter);
+app.use('/api/home', homeRouter);
 
 
 export default app;
