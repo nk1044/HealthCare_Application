@@ -22,6 +22,26 @@ const GoogleAuthLogin = async (response) => {
 
 };
 
+const LoginUser = async (data) => {
+  try {
+    const response = await axios.post(`${backend_url}/api/users/login-user`, { ...data }, { withCredentials: true });
+    // console.log("login data:- ", response);
+    return response?.data;
+  } catch (err) {
+    console.log('LoginUser failed', err);
+  }
+}
+
+const RegisterUser = async (data) => {
+  try {
+    const response = await axios.post(`${backend_url}/api/users/register-user`, { ...data }, { withCredentials: true });
+    // console.log("register data:- ", response);
+    return response?.data;
+  } catch (err) {
+    console.log('RegisterUser failed', err);
+  }
+}
+
 const LogOut = async () => {
   try {
     const data = await axios.get(`${backend_url}/api/users/logout-user`, { withCredentials: true });
@@ -67,7 +87,7 @@ const AddEntryToQueue = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/queue/add-entry-to-queue`, { ...data }, { withCredentials: true });
     // console.log("queue data:- ", response);
-    return response;
+    return response?.data;
   } catch (err) {
     console.log('AddToQueue failed', err);
   }
@@ -88,6 +108,8 @@ const GetQueueData = async () => {
 export {
   GetHomePageData,
   GoogleAuthLogin,
+  LoginUser,
+  RegisterUser,
   LogOut,
   GetAboutPageData,
   GetServicesPageData,
