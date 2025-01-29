@@ -21,6 +21,9 @@ const queueSchema = new Schema({
                 type: String,
                 default: 'No description provided',
             },
+            roomID:{
+                type:Number,
+            }
         }],
         default: []
     }

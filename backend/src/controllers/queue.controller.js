@@ -5,13 +5,15 @@ const AddEntryToQueue = async (req, res) => {
         const { tag, description} = req.body;
         const userId = req?.user?._id;
         const queue = await Queue.findOne({ tag: tag });
+        const randomRoomID = Math.floor(Math.random() * 1000);
         if (!queue) {
             await Queue.create({ 
                 tag, 
                 Entries: [{ 
                     user: userId, 
                     tag:tag, 
-                    description: description 
+                    description: description ,
+                    roomID: randomRoomID
                 }] 
             });
         } else {
@@ -24,7 +26,9 @@ const AddEntryToQueue = async (req, res) => {
         }
         res
         .status(200)
-        .send('User added to queue successfully');
+        .json({
+            roomID:randomRoomID
+        })
     } catch (error) {
         res
         .status(500)
