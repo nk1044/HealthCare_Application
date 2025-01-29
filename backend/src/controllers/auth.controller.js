@@ -24,7 +24,7 @@ const GenerateToken = async (userId) => {
 const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  if([name, email, password, role].some(field => field.trim()==='')) return res.status(400).json({ message: 'All fields are required' });
+  if([name, email, password].some(field => field.trim()==='')) return res.status(400).json({ message: 'All fields are required' });
 
   try {
 

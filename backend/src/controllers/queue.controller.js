@@ -33,6 +33,33 @@ const AddEntryToQueue = async (req, res) => {
 }
 
 
+const GetQueue = async (req, res) => {
+    try {
+        const { tag } = req.body;
+        let queue = null;
+        if(tag=='All'){
+            queue = await Queue.find();
+        }else {
+            queue = await Queue.findOne({ tag: tag });
+        }
+        if (!queue) {
+            res
+            .status(404)
+            .send('Queue not found');
+        } else {
+            res
+            .status(200)
+            .send(queue);
+        }
+    } catch (error) {
+        res
+        .status(500)
+        .send('Error fetching queue');
+    }
+}
+
+
 export {
     AddEntryToQueue,
+    GetQueue,
 }
