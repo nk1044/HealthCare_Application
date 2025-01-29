@@ -1,4 +1,4 @@
-import React, { useState, useCallback , useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useUser } from '../Store/zustand.js';
 import { LogOut } from '../Server/Server.js';
 import Button from './Button.jsx';
@@ -24,8 +24,8 @@ function Navbar() {
 
     useEffect(() => {
         setDropdownOpen(false);
-      }
-      , [navigate, user, setUser]);
+    }
+        , [navigate, user, setUser]);
 
     return (
         <nav className="bg-gray-100 border-b border-gray-300 shadow-lg">
@@ -33,15 +33,15 @@ function Navbar() {
                 {/* Logo Section */}
                 <div className="flex items-center space-x-3 rtl:space-x-reverse cursor-pointer"
                     onClick={() => navigate("/")}
-                    >
+                >
                     <img
                         src="https://iitj.ac.in/images/logo/Design-of-New-Logo-of-IITJ-2.png"
                         className="h-10 rounded-full shadow-md"
                         alt="Logo"
-                        // onClick={() => window.open('https://www.iitj.ac.in/', '_blank')}
+                    // onClick={() => window.open('https://www.iitj.ac.in/', '_blank')}
                     />
                     <span className="text-2xl font-semibold text-gray-800"
-                        // onClick={() => navigate("/")}
+                    // onClick={() => navigate("/")}
                     >HealthCare</span>
                 </div>
 
@@ -59,6 +59,9 @@ function Navbar() {
                     <div
                         onClick={() => navigate("/contact")}
                         className="text-gray-800 hover:text-blue-700 transition">Contact</div>
+                    <div
+                        onClick={() => navigate("/queue-page")}
+                        className="text-gray-800 hover:text-blue-700 transition">Queue Page</div>
                 </div>
 
                 {/* User Menu */}

@@ -12,6 +12,7 @@ import Settings from './Pages/Settings';
 import Services from './Pages/Services';
 import About from './Pages/About';
 import Contact from './Pages/Contact';
+import QueuePage from './Pages/QueuePage';
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,8 @@ const router = createBrowserRouter([
         {path: '/user/settings', element: <Settings />},
         {path: '/about', element: <About />},
         {path: '/services', element: <Services />},
-        {path: '/contact', element: <Contact />}
+        {path: '/contact', element: <Contact />},
+        {path: '/queue-page' ,element: <QueuePage/>}
       ]},
       {path: 'login-user', element: <Login />},
       {path: 'register-user', element: <Register />},
