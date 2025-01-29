@@ -76,7 +76,7 @@ function QueuePage() {
                 ) : entries.length === 0 ? (
                     <p className="text-gray-600">No entries available.</p>
                 ) : (
-                    <div className="w-1/2 space-y-4">
+                    <div className="w-full px-10 space-y-4">
                         {entries.map((entry) => (
                             <div key={entry._id} className="p-4 bg-white shadow-md rounded-md flex justify-between items-center">
                                 <p className="text-sm text-gray-600 font-bold">Tag: {entry.tag}</p>
