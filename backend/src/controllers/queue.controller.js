@@ -5,7 +5,7 @@ const AddEntryToQueue = async (req, res) => {
         const { tag, description} = req.body;
         const userId = req?.user?._id;
         const queue = await Queue.findOne({ tag: tag });
-        const randomRoomID = Math.floor(Math.random() * 1000);
+        const randomRoomID = Math.floor(Math.random() * 100000);
         if (!queue) {
             await Queue.create({ 
                 tag, 
@@ -20,7 +20,8 @@ const AddEntryToQueue = async (req, res) => {
             queue.Entries.push({ 
                 user: userId, 
                 tag:tag, 
-                description: description 
+                description: description,
+                roomID: randomRoomID
             });
             await queue.save({ validateBeforeSave: false});
         }

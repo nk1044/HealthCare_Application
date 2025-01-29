@@ -14,6 +14,7 @@ import About from './Pages/About';
 import Contact from './Pages/Contact';
 import QueuePage from './Pages/QueuePage';
 import AddToQueue from './Pages/AddToQueue';
+import VideoCall from './Pages/VideoCall';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         {path: '/contact', element: <Contact />},
         {path: '/queue-page' ,element: <QueuePage/>},
         {path: '/add-to-queue' ,element: <AddToQueue/>},
+        {path: '/video-call' ,element: <VideoCall/>},
       ]},
       {path: 'login-user', element: <Login />},
       {path: 'register-user', element: <Register />},

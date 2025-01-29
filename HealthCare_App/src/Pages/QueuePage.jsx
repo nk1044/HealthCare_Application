@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { GetQueueData } from '../Server/Server';
+import { useNavigate } from 'react-router-dom';
 
 const tags = ['All', 'General', 'ENT', 'Dentist'];
 
@@ -9,6 +10,8 @@ function QueuePage() {
     const [tag, setTag] = useState('All');
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
 
     // Fetch queue data once when the component mounts
     useEffect(() => {
@@ -24,6 +27,7 @@ function QueuePage() {
         };
         fetchData();
     }, []);
+
 
     // Filter entries based on the selected tag
     const filterEntries = useCallback(() => {
@@ -81,9 +85,16 @@ function QueuePage() {
                             <div key={entry._id} className="p-4 bg-white shadow-md rounded-md flex justify-between items-center">
                                 <p className="text-sm text-gray-600 font-bold">Tag: {entry.tag}</p>
                                 <p className="text-sm text-gray-800">{entry.description}</p>
-                                <button className="w-20 rounded-md px-3 py-1.5 text-sm font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-500">
+                                <button
+                                    className="w-20 rounded-md px-3 py-1.5 text-sm font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-500"
+                                    onClick={() => {
+                                        navigate(`/video-call?roomID=${entry?.roomID}`);
+                                        // console.log('Connect to:', entry);
+                                    }}
+                                >
                                     Connect
                                 </button>
+
                             </div>
                         ))}
                     </div>

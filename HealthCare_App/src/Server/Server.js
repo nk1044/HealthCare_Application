@@ -87,7 +87,7 @@ const AddEntryToQueue = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/queue/add-entry-to-queue`, { ...data }, { withCredentials: true });
     // console.log("queue data:- ", response);
-    return response?.data;
+    return response?.data?.roomID;
   } catch (err) {
     console.log('AddToQueue failed', err);
   }

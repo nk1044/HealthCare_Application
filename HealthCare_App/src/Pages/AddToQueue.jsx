@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import {AddEntryToQueue} from '../Server/Server.js'
+import {AddEntryToQueue} from '../Server/Server.js';
+import { useNavigate } from 'react-router-dom';
 
 function AddToQueue() {
 
@@ -8,6 +9,7 @@ function AddToQueue() {
   const [tag, setTag] = useState("");
   const [Description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async(e) => {
     e.preventDefault();
@@ -20,8 +22,9 @@ function AddToQueue() {
         tag: tag, 
         description: Description
       });
-      if(res.status === 200) {
+      if(res) {
         console.log("User added to queue successfully");
+        navigate(`/video-call?roomID=${res}`);
       } else {
         alert("Error adding user to queue");
       }
