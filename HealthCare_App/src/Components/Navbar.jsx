@@ -62,6 +62,11 @@ function Navbar() {
                     <div
                         onClick={() => navigate("/queue-page")}
                         className="text-gray-800 hover:text-blue-700 transition">Queue Page</div>
+                    
+                    <div
+                        onClick={() => navigate("/add-to-queue")}
+                        className="text-gray-800 hover:text-blue-700 transition">Cunsult Online</div>
+                
                 </div>
 
                 {/* User Menu */}

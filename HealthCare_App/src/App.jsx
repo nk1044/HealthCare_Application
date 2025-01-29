@@ -13,6 +13,7 @@ import Services from './Pages/Services';
 import About from './Pages/About';
 import Contact from './Pages/Contact';
 import QueuePage from './Pages/QueuePage';
+import AddToQueue from './Pages/AddToQueue';
 
 const router = createBrowserRouter([
   {
@@ -26,7 +27,8 @@ const router = createBrowserRouter([
         {path: '/about', element: <About />},
         {path: '/services', element: <Services />},
         {path: '/contact', element: <Contact />},
-        {path: '/queue-page' ,element: <QueuePage/>}
+        {path: '/queue-page' ,element: <QueuePage/>},
+        {path: '/add-to-queue' ,element: <AddToQueue/>},
       ]},
       {path: 'login-user', element: <Login />},
       {path: 'register-user', element: <Register />},

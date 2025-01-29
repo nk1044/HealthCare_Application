@@ -63,6 +63,26 @@ const GetServicesPageData = async () => {
   }
 }
 
+const AddEntryToQueue = async (data) => {
+  try {
+    const response = await axios.post(`${backend_url}/api/queue/add-entry-to-queue`, { ...data }, { withCredentials: true });
+    // console.log("queue data:- ", response);
+    return response;
+  } catch (err) {
+    console.log('AddToQueue failed', err);
+  }
+}
+
+const GetQueueData = async () => {
+  try {
+    const response = await axios.get(`${backend_url}/api/queue/get-queue`, { withCredentials: true });
+    // console.log("queue data:- ", response);
+    return response?.data;
+  } catch (err) {
+    console.log('GetQueueData failed', err);
+  }
+}
+
 
 
 export {
@@ -70,5 +90,7 @@ export {
   GoogleAuthLogin,
   LogOut,
   GetAboutPageData,
-  GetServicesPageData
+  GetServicesPageData,
+  AddEntryToQueue,
+  GetQueueData
 };

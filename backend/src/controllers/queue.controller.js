@@ -35,13 +35,13 @@ const AddEntryToQueue = async (req, res) => {
 
 const GetQueue = async (req, res) => {
     try {
-        const { tag } = req.body;
-        let queue = null;
-        if(tag=='All'){
-            queue = await Queue.find();
-        }else {
-            queue = await Queue.findOne({ tag: tag });
-        }
+        const queue = await Queue.find();
+        // let queue = null;
+        // if(tag=='All'){
+        //     queue = await Queue.find();
+        // }else {
+        //     queue = await Queue.findOne({ tag: tag });
+        // }
         if (!queue) {
             res
             .status(404)
