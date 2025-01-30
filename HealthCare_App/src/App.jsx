@@ -15,6 +15,7 @@ import Contact from './Pages/Contact';
 import QueuePage from './Pages/QueuePage';
 import AddToQueue from './Pages/AddToQueue';
 import VideoCall from './Pages/VideoCall';
+import Auth from './Components/Auth';
 
 const router = createBrowserRouter([
   {
@@ -23,18 +24,18 @@ const router = createBrowserRouter([
     children: [
       {path: '', element: <Home />, children: [
         {path: '', element: <Dashboard />},
-        {path: '/user/profile', element: <Profile />},
-        {path: '/user/settings', element: <Settings />},
+        {path: '/user/profile', element: <Auth> <Profile /> </Auth>},
+        {path: '/user/settings', element: <Auth> <Settings /> </Auth>},
         {path: '/about', element: <About />},
         {path: '/services', element: <Services />},
         {path: '/contact', element: <Contact />},
-        {path: '/queue-page' ,element: <QueuePage/>},
-        {path: '/add-to-queue' ,element: <AddToQueue/>},
-        {path: '/video-call' ,element: <VideoCall/>},
+        {path: '/queue-page' ,element: <Auth> <QueuePage/> </Auth>},
+        {path: '/add-to-queue' ,element: <Auth> <AddToQueue/> </Auth>},
+        {path: '/video-call' ,element: <Auth> <VideoCall/> </Auth>},
       ]},
       {path: 'login-user', element: <Login />},
       {path: 'register-user', element: <Register />},
-      {path: 'reset-user-password', element: <ResetPassword />},
+      {path: 'reset-user-password', element: <Auth> <ResetPassword /> </Auth>},
     ]
   }
 ])

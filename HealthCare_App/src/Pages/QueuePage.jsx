@@ -13,12 +13,12 @@ function QueuePage() {
     const navigate = useNavigate();
 
 
-    // Fetch queue data once when the component mounts
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await GetQueueData();
-                setData(response || []); // Ensure it's always an array
+                setData(response || []);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching queue data:', error);

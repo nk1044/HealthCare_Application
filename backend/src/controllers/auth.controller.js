@@ -20,6 +20,7 @@ const GenerateToken = async (userId) => {
   return AccessToken;
 }
 
+
 // Register user
 const registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -126,11 +127,25 @@ const LogOut = async (req, res) => {
 
 }
 
+const getCurrentUser = async(req, res)=> {
+  try {
+      const CurrentUser = await User.findById(req.user?._id).select("-password -refreshToken -role -avatar");
+      if(!CurrentUser) return res.status(404).json({message: "User not found"});
+
+      return res.status(200).json({user: CurrentUser});
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 
 export {
   googleAuth,
   loginUser,
   registerUser,
-  LogOut
+  LogOut,
+  getCurrentUser,
+  GenerateToken
 }

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../Components/Button';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { GoogleAuthLogin } from '../Server/Server.js';
-import {useUser} from '../Store/zustand.js'
+import {useUser} from '../Store/zustand.js';
 
 function Login() {
     const navigate = useNavigate();

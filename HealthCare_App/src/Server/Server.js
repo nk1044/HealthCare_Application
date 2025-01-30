@@ -52,6 +52,17 @@ const LogOut = async () => {
   }
 }
 
+const GetCurrentUser = async () => {
+  try {
+    const response = await axios.get(`${backend_url}/api/users/get-current-user`, { withCredentials: true });
+    // console.log("current user data:- ", response);
+    return response?.data?.user;
+  } catch (error) {
+    console.log('GetCurrentUser failed', error?.response?.data?.message);
+    return null;
+  }
+}
+
 const GetHomePageData = async () => {
   try {
     const response = await axios.get(`${backend_url}/api/home/dashboard`, { withCredentials: true });
@@ -99,7 +110,7 @@ const GetQueueData = async () => {
     // console.log("queue data:- ", response);
     return response?.data;
   } catch (err) {
-    console.log('GetQueueData failed', err);
+    console.log('GetQueueData failed', err?.response?.data?.message);
   }
 }
 
@@ -111,6 +122,7 @@ export {
   LoginUser,
   RegisterUser,
   LogOut,
+  GetCurrentUser,
   GetAboutPageData,
   GetServicesPageData,
   AddEntryToQueue,
