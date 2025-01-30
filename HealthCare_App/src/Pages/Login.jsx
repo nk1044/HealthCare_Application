@@ -57,7 +57,8 @@ function Login() {
                     <img
                         alt="IITJ"
                         src="/iitjlogo1.png"
-                        className="mx-auto h-28 w-auto"
+                        className="mx-auto h-28 w-auto cursor-pointer"
+                        onClick={()=>(navigate('/'))}
                     />
                     <h2 className="mt-5 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
                         Log in to your account
