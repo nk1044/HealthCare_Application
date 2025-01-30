@@ -6,7 +6,7 @@ function SecondCard({
     image_url
 }) {
   return (
-    <div className="max-w-sm rounded-lg w-[110px] h-[150px] overflow-hidden shadow-md bg-white text-center transition-transform transform hover:scale-105">
+    <div className="w-32 rounded-lg h-40 overflow-hidden shadow-md bg-white text-center transition-transform transform hover:scale-105">
           <div className='flex justify-center p-1'>
           <img 
             className="w-28 h-28 rounded-full" 

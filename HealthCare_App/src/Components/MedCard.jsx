@@ -7,7 +7,7 @@ function MedCard({
     image_url
 }) {
   return (
-      <div className="w-[25vw] min-w-52 rounded overflow-hidden shadow-lg border transition-transform transform hover:scale-105">
+      <div className="w-72 min-w-52 rounded overflow-hidden shadow-lg border transition-transform transform hover:scale-105">
           <div className='flex justify-center mt-1'>
           <img 
             className="w-48 " 
