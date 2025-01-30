@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {AddEntryToQueue} from '../Server/Server.js';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../Pages/Loading.jsx';
 
 function AddToQueue() {
 
@@ -34,7 +35,7 @@ function AddToQueue() {
 
   return (
     <div>
-     {loading ? <h1>Loading...</h1> :
+     {loading ? <Loading /> :
       <div className="py-16 px-5 md:px-20 bg-white">
       <div className="max-w-4xl mx-auto bg-gray-50 p-8 rounded-lg shadow-md">
         <form className="space-y-6" 
