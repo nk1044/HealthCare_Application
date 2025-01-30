@@ -29,6 +29,7 @@ const LoginUser = async (data) => {
     return response?.data?.user;
   } catch (err) {
     console.log('LoginUser failed', err);
+    return {status: 400, error: err?.response?.data?.message };
   }
 }
 

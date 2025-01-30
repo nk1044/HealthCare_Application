@@ -16,7 +16,11 @@ function Register() {
   const handleGoogleLogin = async (response) => {
     try {
       const user = await GoogleAuthLogin(response);
-      if (user) {
+      if (user?.status === 400) {
+        setError(user?.error);
+      }
+      else if (user) {
+        setUser(user);
         navigate('/');
       }
     } catch (error) {
@@ -33,7 +37,11 @@ function Register() {
     console.log(formData);
     
     const user = await RegisterUser(formData);
-    if (user) {
+    console.log(user);
+    if (user?.status === 400) {
+        setError(user?.error);
+    }
+    else if (user) {
       console.log(user);
       setUser(user);
       navigate('/');

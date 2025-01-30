@@ -3,21 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../Components/Button';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { GoogleAuthLogin } from '../Server/Server.js';
-import {useUser} from '../Store/zustand.js';
+import { useUser } from '../Store/zustand.js';
 import { LoginUser } from '../Server/Server.js';
 
 function Login() {
     const navigate = useNavigate();
     const setUser = useUser(useCallback(state => state.setUser, []));
     const [error, setError] = useState('');
-    const [formData, setFormData] = useState({email: '', password: '' });
+    const [formData, setFormData] = useState({ email: '', password: '' });
 
     const handleGoogleLogin = async (response) => {
         console.log('Google Login');
         // e.preventDefault()
         try {
             const user = await GoogleAuthLogin(response);
-            if(user) {
+            // console.log(user);
+            if (user?.status === 400) {
+                setError(user?.error);
+            }
+            else if (user) {
                 await setUser(user);
                 navigate('/')
             }
@@ -29,18 +33,21 @@ function Login() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-      };
-    
-      const handleSubmit = async (e) => {
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-        
+
         const user = await LoginUser(formData);
-        if (user) {
-          setUser(user);
-          navigate('/');
+        // console.log(user);
+        if (user?.status === 400) {
+            setError(user?.error);
         }
-      };
+        else if (user) {
+            setUser(user);
+            navigate('/');
+        }
+    };
 
 
     return (
@@ -108,7 +115,7 @@ function Login() {
                         <div>
                             <Button
                                 text="Sign in"
-                                type="submit" 
+                                type="submit"
                             />
                         </div>
                     </form>
@@ -127,7 +134,7 @@ function Login() {
                         size="large"
                         shape="pill"
                         text="Login with Google"
-                        />
+                    />
 
 
                     <p className="mt-3 text-center text-sm/6 text-gray-500">
