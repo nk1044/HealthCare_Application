@@ -17,13 +17,13 @@ const AddEntryToQueue = async (req, res) => {
                 }] 
             });
         } else {
-            queue.Entries.push({ 
+            queue.Entries.unshift({ 
                 user: userId, 
-                tag:tag, 
+                tag: tag, 
                 description: description,
                 roomID: randomRoomID
             });
-            await queue.save({ validateBeforeSave: false});
+            await queue.save({ validateBeforeSave: false });            
         }
         res
         .status(200)
