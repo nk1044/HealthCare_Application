@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Layout from './Pages/Layout';
 import Auth from './Components/Auth';
+import Loading from './Pages/Loading';
 
 // Lazy load all pages
 const Home = lazy(() => import('./Pages/Home'));
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Suspense fallback={<div>Loading...</div>}><Home /></Suspense>,
+        element: <Suspense fallback={<Loading/>}><Home /></Suspense>,
         children: [
           { path: '', element: <Suspense fallback={<div>Loading...</div>}><Dashboard /></Suspense> },
           { path: '/user/profile', element: <Suspense fallback={<div>Loading...</div>}><Auth><Profile /></Auth></Suspense> },

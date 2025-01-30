@@ -26,7 +26,7 @@ const LoginUser = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/users/login-user`, { ...data }, { withCredentials: true });
     // console.log("login data:- ", response);
-    return response?.data;
+    return response?.data?.user;
   } catch (err) {
     console.log('LoginUser failed', err);
   }
@@ -36,7 +36,7 @@ const RegisterUser = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/users/register-user`, { ...data }, { withCredentials: true });
     // console.log("register data:- ", response);
-    return response?.data;
+    return response?.data?.user;
   } catch (err) {
     console.log('RegisterUser failed', err);
   }

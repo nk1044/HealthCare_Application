@@ -4,11 +4,13 @@ import Button from '../Components/Button';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import { GoogleAuthLogin } from '../Server/Server.js';
 import {useUser} from '../Store/zustand.js';
+import { LoginUser } from '../Server/Server.js';
 
 function Login() {
     const navigate = useNavigate();
     const setUser = useUser(useCallback(state => state.setUser, []));
     const [error, setError] = useState('');
+    const [formData, setFormData] = useState({email: '', password: '' });
 
     const handleGoogleLogin = async (response) => {
         console.log('Google Login');
@@ -25,7 +27,20 @@ function Login() {
         }
     }
 
-
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+      };
+    
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(formData);
+        
+        const user = await LoginUser(formData);
+        if (user) {
+          setUser(user);
+          navigate('/');
+        }
+      };
 
 
     return (
@@ -44,7 +59,7 @@ function Login() {
                 </div>
 
                 <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-sm">
-                    <form action="#" method="POST" className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                                 Email address
@@ -56,6 +71,8 @@ function Login() {
                                     type="email"
                                     required
                                     autoComplete="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 />
                             </div>
@@ -81,6 +98,8 @@ function Login() {
                                     type="password"
                                     required
                                     autoComplete="current-password"
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                 />
                             </div>
@@ -89,6 +108,7 @@ function Login() {
                         <div>
                             <Button
                                 text="Sign in"
+                                type="submit" 
                             />
                         </div>
                     </form>
