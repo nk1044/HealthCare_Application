@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useUser } from '../Store/zustand.js';
 import { GetCurrentUser } from '../Server/Server.js';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Loading from '../Pages/Loading.jsx';
 
 function Auth({ children }) {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ function Auth({ children }) {
         fetchData();
     }, [location.pathname, setUser]);
 
-    return loader ? <div>Loading...</div> : <>{children}</>;
+    return loader ? <Loading/>: <>{children}</>;
 }
 
 export default Auth;
