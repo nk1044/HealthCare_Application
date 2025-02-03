@@ -10,7 +10,8 @@ function Navbar() {
     const user = useUser(useCallback(state => state.user, []));
     const setUser = useUser(useCallback(state => state.setUser, []));
     const navigate = useNavigate();
-
+    // console.log("user:- ", user?.avatar);
+    
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
     };
@@ -55,13 +56,67 @@ function Navbar() {
                     )}
                 </div>
 
-                {!user ? (
-                    <div className="hidden md:flex space-x-4">
-                        <Button text="Login" onClick={() => navigate("/login-user")} />
-                        <Button text="Register" onClick={() => navigate("/register-user")} class_Name="bg-indigo-600 text-white hover:bg-indigo-500 " />
+                {user ? (
+                    <div className="relative hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+                        <button
+                            type="button"
+                            onClick={toggleDropdown}
+                            className="flex items-center justify-center w-10 h-10 border-2 border-gray-500 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <img
+                                className="w-8 h-8 rounded-full text-white"
+                                src={user?.avatar?.trim() ?? "https://img.icons8.com/?size=100&id=H101gtpJBVoh&format=png&color=000000"}
+                                alt="User"
+                            />
+
+                        </button>
+                        {isDropdownOpen && (
+                            <div className="absolute right-0 text-white top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-700 dark:border-gray-600 z-10">
+                                <div className="px-4 py-3">
+                                    <p className="text-sm font-medium text-gray-300">{user?.name}</p>
+                                    <p className="text-sm text-gray-500 truncate">{user?.email}</p>
+                                </div>
+                                <ul className="py-2 text-white cursor-pointer">
+                                    {/* <li>
+                                        <div
+                                            onClick={() => navigate("/user/profile")}
+                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
+                                        >
+                                            Profile
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div
+                                            onClick={() => navigate("/user/settings")}
+                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
+                                        >
+                                            Settings
+                                        </div>
+                                    </li> */}
+                                    <li>
+                                        <span
+                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
+                                            onClick={handleLogout}
+                                        >
+                                            Sign out
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 ) : (
-                    <div className="hidden md:flex text-gray-800 hover:text-red-600 transition cursor-pointer" onClick={handleLogout}>Sign out</div>
+                    <div className="hidden md:flex space-x-4 items-center">
+                        <Button
+                            text="Login"
+                            onClick={() => navigate("/login-user")}
+                        />
+                        <Button
+                            text="register"
+                            onClick={() => navigate("/register-user")}
+                            class_Name='bg-indigo-600 text-white hover:bg-indigo-500 '
+                        />
+                    </div>
                 )}
 
                 <button className="block md:hidden text-gray-800 focus:outline-none" onClick={toggleMenu}>
