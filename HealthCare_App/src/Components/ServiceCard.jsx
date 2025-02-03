@@ -6,7 +6,8 @@ function ServiceCard({
     description
 }) {
     return (
-        <div className="bg-gray-100 rounded-lg shadow-lg p-6 text-center">
+        <div className="bg-gray-100 max-w-72 max-h-64 rounded-lg shadow-lg p-6 text-center
+        transform transition-all hover:scale-105 hover:shadow-2xl">
             <img
                 src={imgsrc}
                 alt="Pharmacy"

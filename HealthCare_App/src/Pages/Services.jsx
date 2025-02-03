@@ -39,7 +39,7 @@ function Services() {
       {/* Services Section */}
       <div className="py-16 px-5 md:px-20 bg-white">
         <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">What We Offer</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8 items-center">
           {/* Service 1 */}
 
           {pageData?.map((service, index) => (
