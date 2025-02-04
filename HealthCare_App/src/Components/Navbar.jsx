@@ -24,6 +24,7 @@ function Navbar() {
         setUser(null);
         setDropdownOpen(false);
         await LogOut();
+        navigate("/");
     };
 
     useEffect(() => {
