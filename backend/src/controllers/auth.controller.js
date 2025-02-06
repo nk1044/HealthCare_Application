@@ -1,6 +1,6 @@
 import { User } from '../models/user.model.js';
 import { verifyGoogleToken } from '../config/google.js';
-
+import {redis} from '../config/redis.js'
 
 const options = {
   httpOnly: true,
@@ -19,6 +19,7 @@ const GenerateToken = async (userId) => {
 
   return AccessToken;
 }
+
 
 
 // Register user

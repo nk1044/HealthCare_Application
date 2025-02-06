@@ -1,4 +1,5 @@
 import { Queue } from "../models/queue.model.js";
+import {redis} from "../config/redis.js"
 
 const AddEntryToQueue = async (req, res) => {
     try {
