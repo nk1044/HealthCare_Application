@@ -14,6 +14,10 @@ import {FeaturedServices, Specialist, PartnerClinic} from './src/models/DashBoar
 import {AboutPageTeam} from './src/models/About.model.js';
 import {Service} from './src/models/Service.model.js';
 
+import { Server } from "socket.io";
+import http from 'http';
+import { getQueueData } from './src/controllers/queue.controller.js';
+
 
 AdminJS.registerAdapter({
     Resource: AdminJSMongoose.Resource,
@@ -30,6 +34,17 @@ const adminOptions = {
 }
 
 const app = express();
+export const server = http.createServer(app);
+
+export const io = new Server(server, {
+    cors: {
+        origin: "*",  // Allow your frontend
+        credentials: true
+    }
+});
+
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -45,14 +60,24 @@ app.use(admin.options.rootPath, adminRouter)
 
 
 
-app.get('/health-check', (req, res) => {
-    res.send('Server is running healthy 👍');
-});
-
 
 app.use('/api/users', authRouter);
 app.use('/api/queue', queueRouter);
 app.use('/api/home', homeRouter);
 
+
+
+// Sockets
+
+io.on("connection",(socket)=>{
+    console.log("User Connected", socket.id);
+    socket.on("join-queue-room", async()=>{
+        socket.join(String(process.env.ROOM_ID));
+        console.log("User Joined Room");
+        socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
+        const queue = await getQueueData();
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
+    })
+})
 
 export default app;

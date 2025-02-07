@@ -1,5 +1,6 @@
 import { Queue } from "../models/queue.model.js";
-import {redis} from "../config/redis.js"
+
+
 
 const AddEntryToQueue = async (req, res) => {
     try {
@@ -26,6 +27,8 @@ const AddEntryToQueue = async (req, res) => {
             });
             await queue.save({ validateBeforeSave: false });            
         }
+        
+
         res
         .status(200)
         .json({
@@ -38,6 +41,10 @@ const AddEntryToQueue = async (req, res) => {
     }
 }
 
+const getQueueData= async ()=>{
+    const queue = await Queue.find();
+    return queue
+}
 
 const GetQueue = async (req, res) => {
     try {
@@ -48,6 +55,7 @@ const GetQueue = async (req, res) => {
         // }else {
         //     queue = await Queue.findOne({ tag: tag });
         // }
+        
         if (!queue) {
             res
             .status(404)
@@ -67,5 +75,6 @@ const GetQueue = async (req, res) => {
 
 export {
     AddEntryToQueue,
-    GetQueue,
+    // GetQueue,
+    getQueueData
 }
