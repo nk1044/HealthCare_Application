@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { GetQueueData } from '../Server/Server';
 import { useNavigate } from 'react-router-dom';
+import { io } from "socket.io-client";
+
+const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
 const tags = ['All', 'General', 'ENT', 'Dentist'];
 
@@ -15,18 +17,30 @@ function QueuePage() {
 
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await GetQueueData();
-                setData(response || []);
+        try {
+            socket.emit("join-queue-room");
+    
+            socket.on("queue-data", (data) => {
+                console.log("Queue Data received");
+                setData(data || []);
                 setLoading(false);
-            } catch (error) {
-                console.error('Error fetching queue data:', error);
-                setLoading(false);
-            }
+            });
+    
+            socket.on("doctor-connected", (data) => {
+                console.log(data);
+            });
+        } catch (error) {
+            console.error("Error fetching queue data:", error);
+            setLoading(false);
+        }
+    
+        return () => {
+            socket.off("queue-data");
+            socket.off("doctor-connected");
         };
-        fetchData();
     }, []);
+    
+  
 
 
     // Filter entries based on the selected tag

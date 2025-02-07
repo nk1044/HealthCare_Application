@@ -6,6 +6,5 @@ const router = Router();
 
 
 router.route('/add-entry-to-queue').post(VerifyToken, AddEntryToQueue);
-// router.route('/get-queue').get(VerifyToken, GetQueue);
 
 export default router;

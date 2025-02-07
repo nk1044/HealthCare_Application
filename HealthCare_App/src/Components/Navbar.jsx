@@ -11,7 +11,7 @@ function Navbar() {
     const setUser = useUser(useCallback(state => state.setUser, []));
     const navigate = useNavigate();
     // console.log("user:- ", user?.avatar);
-    
+
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
     };
@@ -35,7 +35,7 @@ function Navbar() {
     return (
         <nav className="bg-gray-100 border-b border-gray-300 shadow-lg">
             <div className="max-w-screen-xl flex items-center justify-between mx-auto py-3 px-4 md:px-6">
-                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}> 
+                <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate("/")}>
                     <img
                         src="https://iitj.ac.in/images/logo/Design-of-New-Logo-of-IITJ-2.png"
                         className="h-10 rounded-full shadow-md"
@@ -51,8 +51,8 @@ function Navbar() {
                     <div onClick={() => navigate("/contact")} className="text-gray-800 hover:text-blue-700 transition">Contact</div>
                     {user && (
                         <>
-                            <div onClick={() => navigate("/queue-page")} className="text-gray-800 hover:text-blue-700 transition">Queue Page</div>
-                            <div onClick={() => navigate("/add-to-queue")} className="text-gray-800 hover:text-blue-700 transition">Consult Online</div>
+                            {(user.role == 'doctor' || user.role == 'admin') && <div onClick={() => navigate("/queue-page")} className="text-gray-800 hover:text-blue-700 transition">OPD</div>}
+                            {(user.role == 'user' || user.role == 'admin') && <div onClick={() => navigate("/add-to-queue")} className="text-gray-800 hover:text-blue-700 transition">Consult Online</div>}
                         </>
                     )}
                 </div>
@@ -78,22 +78,6 @@ function Navbar() {
                                     <p className="text-sm text-gray-500 truncate">{user?.email}</p>
                                 </div>
                                 <ul className="py-2 text-white cursor-pointer">
-                                    {/* <li>
-                                        <div
-                                            onClick={() => navigate("/user/profile")}
-                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
-                                        >
-                                            Profile
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div
-                                            onClick={() => navigate("/user/settings")}
-                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
-                                        >
-                                            Settings
-                                        </div>
-                                    </li> */}
                                     <li>
                                         <span
                                             className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"

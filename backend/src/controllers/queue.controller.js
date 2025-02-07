@@ -1,6 +1,10 @@
+import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
 
-
+const getQueueData= async ()=>{
+    const queue = await Queue.find();
+    return queue
+}
 
 const AddEntryToQueue = async (req, res) => {
     try {
@@ -27,8 +31,9 @@ const AddEntryToQueue = async (req, res) => {
             });
             await queue.save({ validateBeforeSave: false });            
         }
-        
-
+        const queueData = await getQueueData();
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', queueData);
+         
         res
         .status(200)
         .json({
@@ -41,40 +46,10 @@ const AddEntryToQueue = async (req, res) => {
     }
 }
 
-const getQueueData= async ()=>{
-    const queue = await Queue.find();
-    return queue
-}
 
-const GetQueue = async (req, res) => {
-    try {
-        const queue = await Queue.find();
-        // let queue = null;
-        // if(tag=='All'){
-        //     queue = await Queue.find();
-        // }else {
-        //     queue = await Queue.findOne({ tag: tag });
-        // }
-        
-        if (!queue) {
-            res
-            .status(404)
-            .send('Queue not found');
-        } else {
-            res
-            .status(200)
-            .send(queue);
-        }
-    } catch (error) {
-        res
-        .status(500)
-        .send('Error fetching queue');
-    }
-}
 
 
 export {
     AddEntryToQueue,
-    // GetQueue,
     getQueueData
 }

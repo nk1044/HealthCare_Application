@@ -105,15 +105,15 @@ const AddEntryToQueue = async (data) => {
   }
 }
 
-const GetQueueData = async () => {
-  try {
-    const response = await axios.get(`${backend_url}/api/queue/get-queue`, { withCredentials: true });
-    // console.log("queue data:- ", response);
-    return response?.data;
-  } catch (err) {
-    console.log('GetQueueData failed', err?.response?.data?.message);
-  }
-}
+// const GetQueueData = async () => {
+//   try {
+//     const response = await axios.get(`${backend_url}/api/queue/get-queue`, { withCredentials: true });
+//     // console.log("queue data:- ", response);
+//     return response?.data;
+//   } catch (err) {
+//     console.log('GetQueueData failed', err?.response?.data?.message);
+//   }
+// }
 
 
 
@@ -127,5 +127,5 @@ export {
   GetAboutPageData,
   GetServicesPageData,
   AddEntryToQueue,
-  GetQueueData
+  // GetQueueData
 };
