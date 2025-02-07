@@ -1,6 +1,6 @@
 import { User } from '../models/user.model.js';
 import { verifyGoogleToken } from '../config/google.js';
-import {redis} from '../config/redis.js'
+// import {redis} from '../config/redis.js'
 
 const options = {
   httpOnly: true,
