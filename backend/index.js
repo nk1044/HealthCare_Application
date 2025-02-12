@@ -9,7 +9,7 @@ import AdminJSExpress from '@adminjs/express'
 const port = process.env.PORT || 3000;
 
 
-app.get('/', (req, res) => {
+app.get('/health-check', (req, res) => {
     res.send('Server is running healthy 👍');
 });
 
