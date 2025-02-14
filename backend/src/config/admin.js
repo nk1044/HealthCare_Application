@@ -69,7 +69,7 @@ export const startAdmin = async  (app) => {
             store: sessionStore,
             resave: false,
             saveUninitialized: false,
-            secret: process.env.SESSION_SECRET || 'sessionsecret',
+            secret: process.env.REFRESH_TOKEN_SECRET || 'sessionsecret',
             cookie: {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
