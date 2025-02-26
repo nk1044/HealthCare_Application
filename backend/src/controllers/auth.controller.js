@@ -83,8 +83,8 @@ const loginUser = async (req, res) => {
 
 // Google authentication
 const googleAuth = async (req, res) => {
-
-  const { token, role } = req.body;
+  // console.log(req.body);
+  const { token } = req.body;
 
   try {
     const googleUser = await verifyGoogleToken(token);
@@ -96,7 +96,7 @@ const googleAuth = async (req, res) => {
         email: googleUser.email,
         password: googleUser.sub,
         avatar: googleUser.picture,
-        role: role ?? "user",
+        role: "user",
       });
       await newUser.save({ validateBeforeSave: false });
     }

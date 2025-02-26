@@ -8,11 +8,11 @@ const backend_url = String(import.meta.env.VITE_BACKEND_URI);
 
 const GoogleAuthLogin = async (response) => {
   const { credential } = response;
+  console.log("credential:- ", credential);
   try {
     const data = await axios.post(
       `${backend_url}/api/users/google-auth`,
-      { token: credential },
-      { withCredentials: true }
+      { token: credential }
     );
     // console.log(data?.data?.user);
     return data?.data?.user;
