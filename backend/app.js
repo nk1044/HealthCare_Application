@@ -10,7 +10,7 @@ import { Server } from "socket.io";
 import http from 'http';
 import { getQueueData } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
-import { startAdmin } from './src/config/admin.js';
+
 
 
 
@@ -45,8 +45,9 @@ io.on("connection", (socket) => {
 });
 
 
-
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Your existing routes
 app.use('/api/users', authRouter);

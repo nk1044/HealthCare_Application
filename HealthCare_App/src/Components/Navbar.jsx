@@ -10,7 +10,7 @@ function Navbar() {
     const user = useUser(useCallback(state => state.user, []));
     const setUser = useUser(useCallback(state => state.setUser, []));
     const navigate = useNavigate();
-    // console.log("user:- ", user?.avatar);
+    // console.log("user:- ", user?.avatar?.trim());
 
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
@@ -66,7 +66,7 @@ function Navbar() {
                         >
                             <img
                                 className="w-8 h-8 rounded-full text-white"
-                                src={user?.avatar?.trim() ?? "https://img.icons8.com/?size=100&id=H101gtpJBVoh&format=png&color=000000"}
+                                src={user?.avatar ?? "https://img.icons8.com/?size=100&id=H101gtpJBVoh&format=png&color=000000"}
                                 alt="User"
                             />
 
