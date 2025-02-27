@@ -12,8 +12,6 @@ import { getQueueData } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
 
 
-
-
 const app = express();
 export const server = http.createServer(app);
 
@@ -35,13 +33,68 @@ app.use(cors({
 // Sockets
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
+
+    socket.on('disconnect', (reason) => {
+        console.log('User disconnected:', reason, socket.id);
+    });
+
     socket.on("join-queue-room", async () => {
         socket.join(String(process.env.ROOM_ID));
+        console.log("room id",String(process.env.ROOM_ID));
+        
         console.log("User Joined Room");
         socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
         const queue = await getQueueData();
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     })
+
+    socket.on('join-room', (data) => {
+        const roomId = data?.roomId;
+        const userId = data?.userId;
+
+        if (!roomId || !userId) {
+            console.error('Invalid data received for joining room:', data);
+            return;
+        }
+
+        console.log(`User ${userId} joined room: ${roomId}`);
+        socket.join(roomId);
+        socket.to(roomId).emit('user-connected', { userId });
+    });
+
+
+    socket.on('send-message', (data) => {
+        const { roomId, userId, message } = data;
+        if (!roomId || !userId || !message) {
+            console.error('Invalid message data:', data);
+            return;
+        }
+        console.log(`Message from ${userId} in room ${roomId}: ${message}`);
+        socket.to(roomId).emit('receive-message', { userId, message });
+    });
+
+    socket.on("offer", ({ roomId, offer }) => {
+        socket.to(roomId).emit("offer", { offer });
+    });
+
+    socket.on("answer", ({ roomId, answer }) => {
+        socket.to(roomId).emit("answer", { answer });
+    });
+
+    socket.on("ice-candidate", ({ roomId, candidate }) => {
+        socket.to(roomId).emit("ice-candidate", { candidate });
+    });
+
+    socket.on('send-stream', (data) => {
+        const { roomId, userId, stream } = data;
+
+        if (!roomId || !userId || !stream) {
+            console.error('Invalid data received for sending stream:', data);
+            return;
+        }
+        socket.to(roomId).emit('receive-stream', { userId, stream });
+    });
+
 });
 
 

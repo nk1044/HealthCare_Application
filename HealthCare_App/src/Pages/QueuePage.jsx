@@ -40,8 +40,6 @@ function QueuePage() {
         };
     }, []);
     
-  
-
 
     // Filter entries based on the selected tag
     const filterEntries = useCallback(() => {
