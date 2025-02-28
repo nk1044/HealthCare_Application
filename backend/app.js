@@ -40,13 +40,13 @@ io.on("connection", (socket) => {
 
     socket.on("join-queue-room", async () => {
         socket.join(String(process.env.ROOM_ID));
-        console.log("room id",String(process.env.ROOM_ID));
+        console.log("room id", String(process.env.ROOM_ID));
         
         console.log("User Joined Room");
         socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
         const queue = await getQueueData();
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
-    })
+    });
 
     socket.on('join-room', (data) => {
         const roomId = data?.roomId;
@@ -58,10 +58,17 @@ io.on("connection", (socket) => {
         }
 
         console.log(`User ${userId} joined room: ${roomId}`);
+        
+        // Join the room
         socket.join(roomId);
+        
+        // Check room size and notify other users in the room
+        const roomSize = io.sockets.adapter.rooms.get(roomId)?.size || 0;
+        console.log(`Room ${roomId} now has ${roomSize} participants`);
+        
+        // Notify others in the room about this new connection
         socket.to(roomId).emit('user-connected', { userId });
     });
-
 
     socket.on('send-message', (data) => {
         const { roomId, userId, message } = data;
@@ -85,16 +92,20 @@ io.on("connection", (socket) => {
         socket.to(roomId).emit("ice-candidate", { candidate });
     });
 
+    socket.on('leave-room', ({ roomId, userId }) => {
+        console.log(`User ${userId} leaving room ${roomId}`);
+        socket.leave(roomId);
+        socket.to(roomId).emit('user-disconnected', { userId });
+    });
+
     socket.on('send-stream', (data) => {
         const { roomId, userId, stream } = data;
-
         if (!roomId || !userId || !stream) {
             console.error('Invalid data received for sending stream:', data);
             return;
         }
         socket.to(roomId).emit('receive-stream', { userId, stream });
     });
-
 });
 
 
