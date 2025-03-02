@@ -66,7 +66,7 @@ function Navbar() {
                         >
                             <img
                                 className="w-8 h-8 rounded-full text-white"
-                                src={user?.avatar ?? "https://img.icons8.com/?size=100&id=H101gtpJBVoh&format=png&color=000000"}
+                                src={ user?.avatar?.trim() ?? "https://img.icons8.com/?size=100&id=H101gtpJBVoh&format=png&color=000000"}
                                 alt="User"
                             />
 
