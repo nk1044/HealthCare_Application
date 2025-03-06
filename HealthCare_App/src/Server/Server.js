@@ -122,7 +122,19 @@ const getDataByUser = async (data) => {
     return response?.data;
   } catch (err) {
     console.log('GetHomePageData failed', err);
+    return null;
   }
+}
+
+const DeleteQueueEntry = async (data) => {
+    try {
+      const response = await axios.post(`${backend_url}/api/delete-entry-from-queue`, data ,  { withCredentials: true });
+      console.log(response.data);
+      return response?.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
 }
 
 
@@ -137,5 +149,6 @@ export {
   GetServicesPageData,
   AddEntryToQueue,
   // GetQueueData,
-  getDataByUser
+  getDataByUser,
+  DeleteQueueEntry
 };
