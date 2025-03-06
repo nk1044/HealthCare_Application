@@ -51,26 +51,21 @@ const RemoveEntryFromQueue = async (req, res) => {
     console.log(Queue_Id,userId,"hello");
     
     try {
-        // Fetch the queue by ID
         const queue = await Queue.findById(Queue_Id);
         
         if (!queue) {
             return res.status(404).json({ message: "Queue entry does not exist" });
         }
-
-        // Find the user's entry in the queue
         const entryIndex = queue.Entries.findIndex(entry => String(entry.user) === userId);
 
         if (entryIndex === -1) {
             return res.status(400).json({ message: "Entry is no longer available in the queue" });
         }
-
-        // Remove the entry from the queue
         queue.Entries.splice(entryIndex, 1);
 
-        // Save the updated queue without validation issues
         await queue.save({ validateBeforeSave: false });
-
+        const queueData = await getQueueData();
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', queueData);
         return res.status(200).json({ message: "Entry removed successfully", queue });
 
     } catch (error) {
