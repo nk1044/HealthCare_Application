@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from "socket.io-client";
+import { DeleteQueueEntry } from '../Server/Server';
 
 const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
@@ -14,13 +15,15 @@ function QueuePage() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+
+
     useEffect(() => {
         try {
             socket.emit("join-queue-room");
     
             socket.on("queue-data", (data) => {
-                console.log("Queue Data received");
-                console.log(data);
+                // console.log("Queue Data received");
+                // console.log(data);
                 
                 setData(data || []);
                 setLoading(false);
@@ -40,10 +43,11 @@ function QueuePage() {
         };
     }, []);
     
+
     // Filter entries based on the selected tag
     const filterEntries = useCallback(() => {
         if (tag === 'All') {
-            setEntries(data.flatMap(entry => entry.Entries.map(e => ({ ...e, tag: entry.tag }))));
+            setEntries(data.flatMap(entry => entry.Entries.map(e => ({ ...e, tag: entry.tag, Queue_Id:entry._id }))));
         } else {
             const filtered = data
                 .filter(entry => entry.tag === tag)
@@ -57,7 +61,11 @@ function QueuePage() {
         filterEntries();
     }, [tag, data, filterEntries]);
 
-    // Function to get tag color
+    const handleRemoveEntry = (data) => {
+        // console.log("Removing entry:", data);
+        DeleteQueueEntry(data)
+    };
+
     const getTagColor = (tagName) => {
         switch(tagName) {
             case 'General': return 'bg-blue-100 text-blue-800';
@@ -65,11 +73,6 @@ function QueuePage() {
             case 'Dentist': return 'bg-purple-100 text-purple-800';
             default: return 'bg-gray-100 text-gray-800';
         }
-    };
-
-    const handleRemoveEntry = (id) => {
-        console.log("Removing entry:", id);
-        // Implement the removal logic here
     };
 
     return (
@@ -202,7 +205,7 @@ function QueuePage() {
                                             </button>
                                             <button
                                                 className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-red-600 bg-white hover:bg-red-50 shadow-sm border-red-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-150"
-                                                onClick={() => handleRemoveEntry(entry._id)}
+                                                onClick={() => handleRemoveEntry({Queue_Id: entry?.Queue_Id, userId: entry?.user})}
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

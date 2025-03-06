@@ -15,7 +15,7 @@ function Auth({ children }) {
         try {
             const CurrentUser = await GetCurrentUser();
 
-            if (!CurrentUser || CurrentUser?._id !== user?._id) {
+            if (!CurrentUser || String(CurrentUser?._id) !== user?._id) {
                 setUser(null);
                 console.log("User not found in database in Auth.jsx");
                 navigate("/login-user");
