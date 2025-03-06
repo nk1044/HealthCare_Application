@@ -81,6 +81,22 @@ function Navbar() {
                                     <li>
                                         <span
                                             className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
+                                            onClick={()=>navigate('/user/profile')}
+                                        >
+                                            Profile
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
+                                            onClick={()=>navigate('/user/settings')}
+                                        >
+                                            Settings
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span
+                                            className="block px-4 py-2 text-sm hover:bg-gray-100 hover:text-black transition"
                                             onClick={handleLogout}
                                         >
                                             Sign out
