@@ -48,7 +48,8 @@ const AddEntryToQueue = async (req, res) => {
 
 const RemoveEntryFromQueue = async (req, res) => {
     const { Queue_Id, userId } = req.body;
-
+    console.log(Queue_Id,userId,"hello");
+    
     try {
         // Fetch the queue by ID
         const queue = await Queue.findById(Queue_Id);
@@ -95,7 +96,7 @@ const getQueueByUser = async (req, res) => {
             return res.status(200).json({ message: "User entry not found in queue" });
         }
 
-        res.status(200).json({ userEntry });
+        res.status(200).json({ userEntry,queueId:queue._id });
     } catch (error) {
         res
             .status(500)

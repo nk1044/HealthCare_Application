@@ -118,7 +118,7 @@ const AddEntryToQueue = async (data) => {
 const getDataByUser = async (data) => {
   try {
     const response = await axios.get(`${backend_url}/api/queue/get-user-queue/${data}`, { withCredentials: true });
-    console.log(response.data);
+    // console.log(response.data);
     return response?.data;
   } catch (err) {
     console.log('GetHomePageData failed', err);
@@ -128,8 +128,8 @@ const getDataByUser = async (data) => {
 
 const DeleteQueueEntry = async (data) => {
     try {
-      const response = await axios.post(`${backend_url}/api/delete-entry-from-queue`, data ,  { withCredentials: true });
-      console.log(response.data);
+      const response = await axios.post(`${backend_url}/api/queue/delete-entry-from-queue`, data ,  { withCredentials: true });
+      // console.log(response.data);
       return response?.data;
     } catch (error) {
       console.log(error);
