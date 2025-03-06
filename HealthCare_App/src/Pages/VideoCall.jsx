@@ -37,7 +37,7 @@ const VideoCall = () => {
     const roomFromURL = getQueryParams();
     if (roomFromURL) {
       setRoomId(roomFromURL);
-      console.log("Room ID set from URL:", roomFromURL);
+      // console.log("Room ID set from URL:", roomFromURL);
     } else {
       console.warn("No roomID found in URL");
     }
@@ -58,13 +58,13 @@ const VideoCall = () => {
 
   // Effect to handle remoteVideoRef being ready
   useEffect(() => {
-    console.log("Remote stream changed:", !!remoteStream);
+    // console.log("Remote stream changed:", !!remoteStream);
     
     if (remoteVideoRef.current && remoteStream) {
-      console.log("Setting remote video srcObject");
+      // console.log("Setting remote video srcObject");
       remoteVideoRef.current.srcObject = remoteStream;
     } else if (remoteStream) {
-      console.log("Remote video ref not ready, storing stream for later");
+      // console.log("Remote video ref not ready, storing stream for later");
       pendingRemoteStream.current = remoteStream;
     }
   }, [remoteStream]);
@@ -72,7 +72,7 @@ const VideoCall = () => {
   // Check if pendingRemoteStream can be applied after remoteVideoRef is available
   useEffect(() => {
     if (remoteVideoRef.current && pendingRemoteStream.current) {
-      console.log("Applying pending remote stream to now-available ref");
+      // console.log("Applying pending remote stream to now-available ref");
       remoteVideoRef.current.srcObject = pendingRemoteStream.current;
       pendingRemoteStream.current = null;
     }
@@ -80,31 +80,31 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (!roomId || !userId) {
-      console.log("Waiting for roomId and userId to be available");
+      // console.log("Waiting for roomId and userId to be available");
       return;
     }
     
-    console.log(`Initializing call with roomId: ${roomId} and userId: ${userId}`);
+    // console.log(`Initializing call with roomId: ${roomId} and userId: ${userId}`);
     setLoading(true);
 
     const initMedia = async () => {
       try {
-        console.log("Requesting user media");
+        // console.log("Requesting user media");
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
           audio: true,
         });
 
-        console.log("Local stream obtained:", stream.id);
+        // console.log("Local stream obtained:", stream.id);
         setLocalStream(stream);
 
         // Ensure local video is displayed correctly
-        console.log("Local video tracks:", stream.getVideoTracks().length > 0 ? "available" : "missing");
+        // console.log("Local video tracks:", stream.getVideoTracks().length > 0 ? "available" : "missing");
         
         // Force a small delay to ensure DOM is ready
         setTimeout(() => {
           if (localVideoRef.current) {
-            console.log("Setting local video srcObject");
+            // console.log("Setting local video srcObject");
             localVideoRef.current.srcObject = stream;
             // Try to manually play the video
             localVideoRef.current.play().catch(e => console.error("Error playing local video:", e));
@@ -117,11 +117,11 @@ const VideoCall = () => {
         audioTrackRef.current = stream.getAudioTracks()[0];
         videoTrackRef.current = stream.getVideoTracks()[0];
 
-        console.log("Joining room:", roomId);
+        // console.log("Joining room:", roomId);
         socket.emit("join-room", { roomId, userId });
 
         // Initialize WebRTC Peer Connection
-        console.log("Initializing peer connection");
+        // console.log("Initializing peer connection");
         peerConnection.current = new RTCPeerConnection({
           iceServers: [
             { urls: "stun:stun.l.google.com:19302" },
@@ -131,28 +131,28 @@ const VideoCall = () => {
         });
 
         // Add local stream tracks to peer connection
-        console.log("Adding local tracks to peer connection");
+        // console.log("Adding local tracks to peer connection");
         stream.getTracks().forEach((track) => {
-          console.log(`Adding track: ${track.kind}`);
+          // console.log(`Adding track: ${track.kind}`);
           peerConnection.current.addTrack(track, stream);
         });
 
         // When receiving remote stream
         peerConnection.current.ontrack = (event) => {
-          console.log("Remote track received:", event.track.kind);
-          console.log("Remote streams:", event.streams.length);
+          // console.log("Remote track received:", event.track.kind);
+          // console.log("Remote streams:", event.streams.length);
           
           if (event.streams && event.streams[0]) {
             const stream = event.streams[0];
-            console.log("Setting remote stream:", stream.id);
+            // console.log("Setting remote stream:", stream.id);
             setRemoteStream(stream);
             
             // Safely handle setting srcObject
             if (remoteVideoRef.current) {
-              console.log("Remote video ref available, setting srcObject directly");
+              // console.log("Remote video ref available, setting srcObject directly");
               remoteVideoRef.current.srcObject = stream;
             } else {
-              console.log("Remote video ref not available, storing stream for later");
+              // console.log("Remote video ref not available, storing stream for later");
               pendingRemoteStream.current = stream;
             }
           } else {
@@ -163,28 +163,28 @@ const VideoCall = () => {
         // When ICE candidate is generated
         peerConnection.current.onicecandidate = (event) => {
           if (event.candidate) {
-            console.log("Sending ICE candidate");
+            // console.log("Sending ICE candidate");
             socket.emit("ice-candidate", { roomId, candidate: event.candidate });
           }
         };
 
         // Connection state changes
         peerConnection.current.onconnectionstatechange = () => {
-          console.log("Connection state:", peerConnection.current.connectionState);
+          // console.log("Connection state:", peerConnection.current.connectionState);
         };
 
         peerConnection.current.oniceconnectionstatechange = () => {
-          console.log("ICE connection state:", peerConnection.current.iceConnectionState);
+          // console.log("ICE connection state:", peerConnection.current.iceConnectionState);
         };
 
         // Listen for user connections
         socket.on("user-connected", async ({ userId }) => {
-          console.log(`User ${userId} connected, creating offer`);
+          // console.log(`User ${userId} connected, creating offer`);
           try {
             // Create and send offer when a new user connects
             const offer = await peerConnection.current.createOffer();
             await peerConnection.current.setLocalDescription(offer);
-            console.log("Sending offer");
+            // console.log("Sending offer");
             socket.emit("offer", { roomId, offer });
           } catch (err) {
             console.error("Error creating offer:", err);
@@ -193,20 +193,20 @@ const VideoCall = () => {
 
         // Listen for WebRTC signaling messages
         socket.on("offer", async ({ offer }) => {
-          console.log("Received offer");
+          // console.log("Received offer");
           try {
             if (peerConnection.current) {
               if (peerConnection.current.signalingState !== "have-local-offer") {
-                console.log("Setting remote description from offer");
+                // console.log("Setting remote description from offer");
                 await peerConnection.current.setRemoteDescription(new RTCSessionDescription(offer));
                 
-                console.log("Creating answer");
+                // console.log("Creating answer");
                 const answer = await peerConnection.current.createAnswer();
                 
-                console.log("Setting local description");
+                // console.log("Setting local description");
                 await peerConnection.current.setLocalDescription(answer);
                 
-                console.log("Sending answer");
+                // console.log("Sending answer");
                 socket.emit("answer", { roomId, answer });
               } else {
                 console.warn("Already have local offer, ignoring received offer");
@@ -220,11 +220,11 @@ const VideoCall = () => {
         });
 
         socket.on("answer", async ({ answer }) => {
-          console.log("Received answer");
+          // console.log("Received answer");
           try {
             if (peerConnection.current) {
               if (peerConnection.current.signalingState === "have-local-offer") {
-                console.log("Setting remote description from answer");
+                // console.log("Setting remote description from answer");
                 await peerConnection.current.setRemoteDescription(new RTCSessionDescription(answer));
               } else {
                 console.warn(`Cannot set remote answer in signaling state: ${peerConnection.current.signalingState}`);
@@ -238,10 +238,10 @@ const VideoCall = () => {
         });
 
         socket.on("ice-candidate", async ({ candidate }) => {
-          console.log("Received ICE candidate");
+          // console.log("Received ICE candidate");
           try {
             if (candidate && peerConnection.current) {
-              console.log("Adding ICE candidate");
+              // console.log("Adding ICE candidate");
               await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
             }
           } catch (err) {
@@ -260,7 +260,7 @@ const VideoCall = () => {
 
     return () => {
       // Clean up
-      console.log("Cleaning up VideoCall component");
+      // console.log("Cleaning up VideoCall component");
       socket.off("user-connected");
       socket.off("offer");
       socket.off("answer");
@@ -268,12 +268,12 @@ const VideoCall = () => {
 
       // Stop all tracks before closing connection
       if (localStream) {
-        console.log("Stopping local stream tracks");
+        // console.log("Stopping local stream tracks");
         localStream.getTracks().forEach(track => track.stop());
       }
 
       if (peerConnection.current) {
-        console.log("Closing peer connection");
+        // console.log("Closing peer connection");
         peerConnection.current.close();
         peerConnection.current = null;
       }
@@ -284,14 +284,14 @@ const VideoCall = () => {
   const toggleAudio = () => {
     if (localStream) {
       const newMuteState = !isAudioMuted;
-      console.log(`Attempting to ${newMuteState ? 'mute' : 'unmute'} audio`);
+      // console.log(`Attempting to ${newMuteState ? 'mute' : 'unmute'} audio`);
       
       // Get all audio tracks and set their enabled state
       const audioTracks = localStream.getAudioTracks();
       if (audioTracks.length > 0) {
         audioTracks.forEach(track => {
           track.enabled = !newMuteState;
-          console.log(`Audio track ${track.id} enabled: ${!newMuteState}`);
+          // console.log(`Audio track ${track.id} enabled: ${!newMuteState}`);
         });
         
         // Store reference to the main audio track
@@ -303,7 +303,7 @@ const VideoCall = () => {
       }
       
       setIsAudioMuted(newMuteState);
-      console.log(`Audio state updated: ${newMuteState ? 'muted' : 'unmuted'}`);
+      // console.log(`Audio state updated: ${newMuteState ? 'muted' : 'unmuted'}`);
     } else {
       console.warn("Cannot toggle audio - no local stream available");
     }
@@ -320,7 +320,7 @@ const toggleVideo = () => {
     if (!newVideoState && localVideoRef.current && localStream) {
       // Make sure the srcObject is set correctly
       if (localVideoRef.current.srcObject !== localStream) {
-        console.log("Resetting local video srcObject");
+        // console.log("Resetting local video srcObject");
         localVideoRef.current.srcObject = localStream;
       }
       
@@ -329,13 +329,13 @@ const toggleVideo = () => {
     }
     
     setIsVideoOff(newVideoState);
-    console.log(`Video ${newVideoState ? 'off' : 'on'}`);
+    // console.log(`Video ${newVideoState ? 'off' : 'on'}`);
   }
 };
 useEffect(() => {
   // When the video is turned back on after being off
   if (!isVideoOff && localStream && localVideoRef.current) {
-    console.log("Video turned on, ensuring video is displayed");
+    // console.log("Video turned on, ensuring video is displayed");
     
     // Ensure the video track is enabled
     const videoTracks = localStream.getVideoTracks();
