@@ -29,7 +29,7 @@ const LoginUser = async (data) => {
     return response?.data?.user;
   } catch (err) {
     console.log('LoginUser failed', err);
-    return {status: 400, error: err?.response?.data?.message };
+    return { status: 400, error: err?.response?.data?.message };
   }
 }
 
@@ -79,7 +79,7 @@ const GetAboutPageData = async () => {
     const response = await axios.get(`${backend_url}/api/home/about`, { withCredentials: true });
     // console.log("about page data:- ", response);
     return response?.data
-    ;
+      ;
   } catch (err) {
     console.log('GetAboutPageData failed', err);
   }
@@ -115,6 +115,15 @@ const AddEntryToQueue = async (data) => {
 //   }
 // }
 
+const getDataByUser = async (data) => {
+  try {
+    const response = await axios.get(`${backend_url}/api/queue/get-user-queue/${data}`, { withCredentials: true });
+    console.log(response.data);
+    return response?.data;
+  } catch (err) {
+    console.log('GetHomePageData failed', err);
+  }
+}
 
 
 export {
@@ -127,5 +136,6 @@ export {
   GetAboutPageData,
   GetServicesPageData,
   AddEntryToQueue,
-  // GetQueueData
+  // GetQueueData,
+  getDataByUser
 };
