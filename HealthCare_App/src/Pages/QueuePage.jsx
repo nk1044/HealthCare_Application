@@ -22,6 +22,8 @@ function QueuePage() {
     
             socket.on("queue-data", (data) => {
                 console.log("Queue Data received");
+                console.log(data);
+                
                 setData(data || []);
                 setLoading(false);
             });
