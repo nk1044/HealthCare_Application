@@ -2,129 +2,143 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Footer() {
-
   const navigate = useNavigate();
-
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-100 ">
-      <div className="mx-auto w-full max-w-screen-xl px-4 py-8 lg:py-12">
-        <div className="md:flex md:justify-between">
-          {/* Logo and Branding */}
-          <div className="mb-6 md:mb-0">
-            <div className="flex items-center cursor-pointer"
-            onClick={() => navigate("/")}
-            >
+    <footer className="bg-gray-50 border-t border-gray-200">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Main Footer Content */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* PHC Information */}
+          <div className="col-span-1 md:col-span-2">
+            <div onClick={() => navigate("/")} className="flex items-center cursor-pointer mb-4">
               <img
                 src="/iitjlogo1.png"
                 className="h-10 mr-3"
-                alt="HealthCare Logo"
+                alt="IIT Jodhpur Logo"
               />
-              <span className="self-center text-2xl font-bold text-gray-900 ">
-                HealthCare
-              </span>
+              <div>
+                <div className="text-lg font-medium text-gray-900">Primary Health Center</div>
+                <div className="text-sm text-gray-600">IIT Jodhpur</div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-600 mt-2 mb-4">
+              Providing healthcare services to students, faculty, and staff of IIT Jodhpur.
+            </p>
+            <div className="flex items-center text-sm text-gray-600">
+              <svg className="h-4 w-4 text-gray-500 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span>Emergency: 0291 280 1190</span>
             </div>
           </div>
 
-          {/* Links Section */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-12">
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-700 uppercase cursor-pointer"
-              onClick={() => navigate("/")}>
-                Resources
-              </h2>
-              <ul className="text-gray-600 dark:text-gray-400">
-                <li className="mb-4">
-                  <div className="hover:text-gray-900 transition cursor-pointer"
-                  onClick={() => navigate("/")}>
-                    HealthCare
-                  </div>
-                </li>
-                <li>
-                  <div className="hover:text-gray-900  transition cursor-pointer"
+          {/* Quick Links */}
+          <div className="col-span-1">
+            <h2 className="text-sm font-medium text-gray-900 uppercase tracking-wider mb-4">Quick Links</h2>
+            <ul className="space-y-2">
+              <li>
+                <div 
                   onClick={() => navigate("/")}
-                  >
-                    IITJ
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-700 uppercase cursor-pointer"
-              onClick={() => navigate("/")}
-              >
-                Follow Us
-              </h2>
-              <ul className="text-gray-600 dark:text-gray-400">
-                <li className="mb-4">
-                  <div
-                    className="hover:text-gray-900 cursor-pointer transition"
-                    onClick={() => navigate("/")}
-                  >
-                    GitHub
-                  </div>
-                </li>
-                <li>
-                  <div className="hover:text-gray-800 transition cursor-pointer"
-                  onClick={() => navigate("/")}
-                  >
-                    Discord
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-700 uppercase cursor-pointer"
-              onClick={() => navigate("/")}
-              >
-                Legal
-              </h2>
-              <ul className="text-gray-600 ">
-                <li className="mb-4">
-                  <div className="hover:text-gray-900 cursor-pointer transition"
-                  onClick={() => navigate("/")}
-                  >
-                    Privacy Policy
-                  </div>
-                </li>
-                <li>
-                  <div className="hover:text-gray-900 transition cursor-pointer"
-                  onClick={() => navigate("/")}
-                  >
-                    Terms & Conditions
-                  </div>
-                </li>
-              </ul>
-            </div>
+                  className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
+                >
+                  Home
+                </div>
+              </li>
+              <li>
+                <div 
+                  onClick={() => navigate("/services")}
+                  className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
+                >
+                  Services
+                </div>
+              </li>
+              <li>
+                <div 
+                  onClick={() => navigate("/about")}
+                  className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
+                >
+                  About Us
+                </div>
+              </li>
+              <li>
+                <div 
+                  onClick={() => navigate("/contact")}
+                  className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
+                >
+                  Contact
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Important Links */}
+          <div className="col-span-1">
+            <h2 className="text-sm font-medium text-gray-900 uppercase tracking-wider mb-4">Additional Resources</h2>
+            <ul className="space-y-2">
+              <li>
+                <a 
+                  href="https://iitj.ac.in" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  IIT Jodhpur Website
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://iitj.ac.in/students/gymkhana/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  Student Gymkhana
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://iitj.ac.in/academics/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  Academic Calendar
+                </a>
+              </li>
+              <li>
+                <div 
+                  onClick={() => navigate("/add-to-queue")}
+                  className="text-sm text-gray-600 hover:text-blue-600 cursor-pointer transition-colors"
+                >
+                  Book Appointment
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Divider */}
-        <hr className="my-8 border-gray-100 " />
+       
 
-        {/* Footer Bottom */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <span className="text-sm text-gray-600 flex">
-            © 2025{' '}
-            <div className="hover:underline">
-              HealthCare
-            </div>
-            . All Rights Reserved.
-          </span>
-          <div className="flex mt-4 sm:mt-0 space-x-6">
-            <div
-              className="text-gray-800 hover:text-gray-900 "
-              aria-label="Facebook"
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
+          <div className="text-sm text-gray-600">
+            © {currentYear} Primary Health Center, IIT Jodhpur. All rights reserved.
+          </div>
+          <div className="mt-4 md:mt-0 flex items-center space-x-4">
+            <a 
+              href="mailto:phc@iitj.ac.in" 
+              className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
             >
-              <svg
-                className="w-5 h-5"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.99 3.66 9.12 8.44 9.88v-6.99H7.89v-2.89h2.55V9.8c0-2.52 1.49-3.89 3.77-3.89 1.09 0 2.23.19 2.23.19v2.44h-1.25c-1.23 0-1.61.76-1.61 1.54v1.85h2.73l-.44 2.89h-2.29v6.99C18.34 21.12 22 16.99 22 12z" />
-              </svg>
+              phc@iitj.ac.in
+            </a>
+            <span className="text-gray-300">|</span>
+            <div
+              className="text-sm text-gray-600"
+            >
+              +91 0291 280 1190
             </div>
-            {/* Add other social links with similar icons */}
           </div>
         </div>
       </div>

@@ -258,7 +258,7 @@ function AddToQueue() {
       </div>
       
       {loading ? (
-        <div className="flex justify-center">
+        <div className="w-full">
           <Loading />
         </div>
       ) : (
