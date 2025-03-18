@@ -48,6 +48,16 @@ io.on("connection", (socket) => {
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
+    socket.on("joinChatRoom", async (Queue_Id) => {
+        if (!Queue_Id) {
+            console.error('Invalid data received for joining chat room:', Queue_Id);
+            return;
+        }
+        socket.join(Queue_Id);
+        console.log("User Joined a chat Room");
+        socket.to(Queue_Id).emit('user-connected-chat-room', 'A new user connected to chat room');
+    });
+
     socket.on('join-room', (data) => {
         const roomId = data?.roomId;
         const userId = data?.userId;
@@ -76,8 +86,8 @@ io.on("connection", (socket) => {
             console.error('Invalid message data:', data);
             return;
         }
-        console.log(`Message from ${userId} in room ${roomId}: ${message}`);
-        socket.to(roomId).emit('receive-message', { userId, message });
+        console.log(`Message from ${userId} in chat room ${roomId}: ${message}`);
+        socket.to(roomId).emit('receive-chat-message', { userId, message });
     });
 
     socket.on("offer", ({ roomId, offer }) => {
