@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AddEntryToQueue, DeleteQueueEntry, getDataByUser } from '../Server/Server.js';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Pages/Loading.jsx';
 import { useUser } from '../Store/zustand.js';
-import { io } from "socket.io-client";
 import ChatBox from '../Components/ChatBox.jsx';
 
 function AddToQueue() {
@@ -15,58 +14,6 @@ function AddToQueue() {
   const navigate = useNavigate();
   const user = useUser(useCallback(state => state.user, []));
   const [Queue_Id, setQueue_Id] = useState("");
-  const [userMessage, setUserMessage] = useState("");
-  const [Chat, setChat] = useState([]);
-  const [socketConnected, setSocketConnected] = useState(false);
-
-  // Use a ref for the socket to persist it between renders
-  const socketRef = useRef(null);
-  const chatContainerRef = useRef(null);
-
-  // Initialize socket connection once
-  useEffect(() => {
-    // Create the socket instance only once
-    if (!socketRef.current) {
-      socketRef.current = io(String(import.meta.env.VITE_BACKEND_URI), {
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        autoConnect: false, // We'll connect manually when needed
-      });
-    }
-
-    // Socket connection event handlers
-    const onConnect = () => {
-      console.log('Socket connected');
-      setSocketConnected(true);
-    };
-
-    const onDisconnect = () => {
-      console.log('Socket disconnected');
-      setSocketConnected(false);
-    };
-
-    const onConnectionError = (error) => {
-      console.error('Socket connection error:', error);
-      setSocketConnected(false);
-    };
-
-    // Set up event listeners
-    socketRef.current.on('connect', onConnect);
-    socketRef.current.on('disconnect', onDisconnect);
-    socketRef.current.on('connect_error', onConnectionError);
-
-    // Connect the socket
-    socketRef.current.connect();
-
-    // Cleanup function
-    return () => {
-      socketRef.current.off('connect', onConnect);
-      socketRef.current.off('disconnect', onDisconnect);
-      socketRef.current.off('connect_error', onConnectionError);
-
-      // Don't disconnect here - we'll handle that separately
-    };
-  }, []);
 
   // Fetch user data
   useEffect(() => {
@@ -127,11 +74,6 @@ function AddToQueue() {
   const handleDelete = async () => {
     setLoading(true);
     try {
-      // Leave chat room before deleting queue entry
-      if (socketRef.current && socketConnected) {
-        socketRef.current.emit("leaveChatRoom", Queue_Id);
-      }
-
       await DeleteQueueEntry({ userId: user._id, Queue_Id });
       setQueueData(null);
       setChat([]);
