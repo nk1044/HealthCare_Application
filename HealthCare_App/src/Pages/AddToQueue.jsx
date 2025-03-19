@@ -93,18 +93,6 @@ function AddToQueue() {
     }
   };
 
-  // Format timestamp for chat messages
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-
-    try {
-      const date = new Date(timestamp);
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } catch (error) {
-      return '';
-    }
-  };
-
   const renderQueueDetails = () => {
     return (
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
