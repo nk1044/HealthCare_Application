@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../Pages/Loading.jsx';
 import { useUser } from '../Store/zustand.js';
 import { io } from "socket.io-client";
+import ChatBox from '../Components/ChatBox.jsx';
 
 function AddToQueue() {
   const [tags, setTags] = useState(["ENT", "General", "Dentist"]);
@@ -17,7 +18,7 @@ function AddToQueue() {
   const [userMessage, setUserMessage] = useState("");
   const [Chat, setChat] = useState([]);
   const [socketConnected, setSocketConnected] = useState(false);
-  
+
   // Use a ref for the socket to persist it between renders
   const socketRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -62,67 +63,10 @@ function AddToQueue() {
       socketRef.current.off('connect', onConnect);
       socketRef.current.off('disconnect', onDisconnect);
       socketRef.current.off('connect_error', onConnectionError);
-      
+
       // Don't disconnect here - we'll handle that separately
     };
   }, []);
-
-  // Handle chat room joining when Queue_Id changes
-  useEffect(() => {
-    if (!Queue_Id || !socketRef.current || !socketConnected) return;
-
-    console.log(`Joining chat room: ${Queue_Id}`);
-    
-    // Leave any previous room first (good practice)
-    socketRef.current.emit("leaveChatRoom", Queue_Id);
-    
-    // Join the new room
-    socketRef.current.emit("joinChatRoom", Queue_Id);
-    
-    // Request chat history when joining a room
-    socketRef.current.emit("getChatHistory", Queue_Id);
-
-    // Clean up when component unmounts or Queue_Id changes
-    return () => {
-      if (socketRef.current && socketConnected) {
-        socketRef.current.emit("leaveChatRoom", Queue_Id);
-      }
-    };
-  }, [Queue_Id, socketConnected]);
-
-  // Handle chat message events
-  useEffect(() => {
-    if (!socketRef.current) return;
-
-    // Handle receiving a new message
-    const onReceiveMessage = (message) => {
-      console.log("Received message:", message);
-      setChat(prevChat => [...prevChat, message]);
-    };
-
-    // Handle receiving chat history
-    const onChatHistory = (history) => {
-      console.log("Received chat history:", history);
-      setChat(history || []);
-    };
-
-    // Set up event listeners
-    socketRef.current.on("receive-chat-message", onReceiveMessage);
-    socketRef.current.on("chat-history", onChatHistory);
-
-    // Cleanup function
-    return () => {
-      socketRef.current.off("receive-chat-message", onReceiveMessage);
-      socketRef.current.off("chat-history", onChatHistory);
-    };
-  }, []);
-
-  // Auto-scroll to the latest message whenever Chat changes
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [Chat]);
 
   // Fetch user data
   useEffect(() => {
@@ -146,37 +90,6 @@ function AddToQueue() {
     fetchUserData();
   }, [user]);
 
-  // Handle sending a new message
-  const handleSendMessage = () => {
-    if (userMessage.trim() === "" || !socketRef.current || !socketConnected) return;
-    
-    const newMessage = {
-      UserId: "Patient",
-      Message: userMessage.trim(),
-      timestamp: new Date().toISOString()
-    };
-    
-    // Update local state immediately for UI responsiveness
-    setChat(prevChat => [...prevChat, newMessage]);
-    setUserMessage("");
-
-    // Send message to server
-    socketRef.current.emit("send-message", {
-      roomId: Queue_Id,
-      userId: "Patient",
-      message: userMessage.trim(),
-      timestamp: newMessage.timestamp
-    });
-  };
-
-  // Handle enter key press
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -184,14 +97,14 @@ function AddToQueue() {
       alert("Please fill all the fields");
       return;
     }
-    
+
     setLoading(true);
     try {
       const res = await AddEntryToQueue({
         tag: tag,
         description: description
       });
-      
+
       if (res) {
         console.log("User added to queue successfully");
         // Fetch and display queue data
@@ -218,7 +131,7 @@ function AddToQueue() {
       if (socketRef.current && socketConnected) {
         socketRef.current.emit("leaveChatRoom", Queue_Id);
       }
-      
+
       await DeleteQueueEntry({ userId: user._id, Queue_Id });
       setQueueData(null);
       setChat([]);
@@ -241,7 +154,7 @@ function AddToQueue() {
   // Format timestamp for chat messages
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
-    
+
     try {
       const date = new Date(timestamp);
       return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
@@ -287,75 +200,7 @@ function AddToQueue() {
           </div>
 
           {/* Improved Chat Component */}
-          <div className="bg-white border rounded-lg shadow-md overflow-hidden">
-            {/* Chat Header */}
-            <div className="bg-blue-600 text-white p-3 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className={`h-3 w-3 rounded-full mr-2 ${socketConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
-                <h3 className="font-medium">Chat with Doctor</h3>
-              </div>
-              <span className="text-xs bg-blue-700 px-2 py-1 rounded">
-                {socketConnected ? 'Connected' : 'Reconnecting...'}
-              </span>
-            </div>
-            
-            {/* Chat Messages Container */}
-            <div 
-              ref={chatContainerRef}
-              className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50"
-              style={{scrollBehavior: "smooth"}}
-            >
-              {Chat.length === 0 ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500 text-sm italic">No messages yet. Start the conversation!</p>
-                </div>
-              ) : (
-                Chat.map((chat, index) => (
-                  <div key={index} className={`flex w-full ${chat.UserId === "Doctor" ? "justify-start" : "justify-end"}`}>
-                    <div className={`relative max-w-[75%] px-4 py-2 rounded-lg shadow-sm ${
-                      chat.UserId === "Doctor" 
-                        ? "bg-white border border-gray-200 text-gray-800" 
-                        : "bg-blue-600 text-white"
-                    }`}>
-                      <p className="text-sm mb-2">{chat.Message}</p>
-                      <span className={`absolute bottom-1 ${
-                        chat.UserId === "Doctor" ? "right-1" : "left-1"
-                      } text-xs opacity-70`}>
-                        {formatTime(chat.timestamp)}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            
-            {/* Message Input */}
-            <div className="p-3 border-t bg-white">
-              <div className="flex items-center space-x-2">
-                <input
-                  value={userMessage}
-                  onChange={(e) => setUserMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={socketConnected ? "Type your message..." : "Reconnecting..."}
-                  disabled={!socketConnected}
-                  className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                />
-                <button 
-                  onClick={handleSendMessage}
-                  disabled={!userMessage.trim() || !socketConnected}
-                  className={`px-4 py-2 rounded-lg text-white ${
-                    userMessage.trim() && socketConnected
-                      ? "bg-blue-600 hover:bg-blue-700" 
-                      : "bg-blue-400 cursor-not-allowed"
-                  } transition-colors shadow-sm`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          <ChatBox roomId={Queue_Id}/>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <button
@@ -410,7 +255,7 @@ function AddToQueue() {
                   </option>
                 ))}
               </select>
-            
+
             </div>
             {tag && (
               <p className="mt-2 text-sm text-gray-500">
