@@ -76,7 +76,6 @@ function AddToQueue() {
     try {
       await DeleteQueueEntry({ userId: user._id, Queue_Id });
       setQueueData(null);
-      setChat([]);
     } catch (error) {
       console.error("Error deleting queue entry:", error);
     }
