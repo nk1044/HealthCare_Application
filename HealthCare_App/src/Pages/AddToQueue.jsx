@@ -19,55 +19,6 @@ function AddToQueue() {
   const [Chat, setChat] = useState([]);
   const [socketConnected, setSocketConnected] = useState(false);
 
-  // Use a ref for the socket to persist it between renders
-  const socketRef = useRef(null);
-  const chatContainerRef = useRef(null);
-
-  // Initialize socket connection once
-  useEffect(() => {
-    // Create the socket instance only once
-    if (!socketRef.current) {
-      socketRef.current = io(String(import.meta.env.VITE_BACKEND_URI), {
-        reconnectionAttempts: 5,
-        reconnectionDelay: 1000,
-        autoConnect: false, // We'll connect manually when needed
-      });
-    }
-
-    // Socket connection event handlers
-    const onConnect = () => {
-      console.log('Socket connected');
-      setSocketConnected(true);
-    };
-
-    const onDisconnect = () => {
-      console.log('Socket disconnected');
-      setSocketConnected(false);
-    };
-
-    const onConnectionError = (error) => {
-      console.error('Socket connection error:', error);
-      setSocketConnected(false);
-    };
-
-    // Set up event listeners
-    socketRef.current.on('connect', onConnect);
-    socketRef.current.on('disconnect', onDisconnect);
-    socketRef.current.on('connect_error', onConnectionError);
-
-    // Connect the socket
-    socketRef.current.connect();
-
-    // Cleanup function
-    return () => {
-      socketRef.current.off('connect', onConnect);
-      socketRef.current.off('disconnect', onDisconnect);
-      socketRef.current.off('connect_error', onConnectionError);
-
-      // Don't disconnect here - we'll handle that separately
-    };
-  }, []);
-
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
@@ -148,18 +99,6 @@ function AddToQueue() {
       case 'ENT': return 'bg-green-100 text-green-800 border-green-200';
       case 'Dentist': return 'bg-purple-100 text-purple-800 border-purple-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  // Format timestamp for chat messages
-  const formatTime = (timestamp) => {
-    if (!timestamp) return '';
-
-    try {
-      const date = new Date(timestamp);
-      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } catch (error) {
-      return '';
     }
   };
 

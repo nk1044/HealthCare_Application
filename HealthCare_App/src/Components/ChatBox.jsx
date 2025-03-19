@@ -103,7 +103,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
             const messageObject = {
                 UserId: data.userId || data.UserId,
                 Message: data.message || data.Message,
-                timestamp: data.timestamp
+                timestamp: new Date().toISOString()
             };
 
             setChat(prevChat => [...prevChat, messageObject]);
@@ -166,13 +166,6 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
         }
     };
 
-    // Format timestamp for display
-    const formatTime = (timestamp) => {
-        if (!timestamp) return "";
-        const date = new Date(timestamp);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
     return (
         <>
             <div className="bg-white border rounded-lg shadow-md overflow-hidden pb-2">
@@ -214,7 +207,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                                     : "bg-blue-600 text-white"
                                     }`}>
                                     <p className="text-sm mb-2">{message.Message}</p>
-                                    <span className={`absolute bottom-1 ${message.UserId === "Doctor" ? "right-1" : "left-1"
+                                    <span className={`absolute bottom-0 ${message.UserId == role ? "right-1" : "left-1"
                                         } text-xs opacity-70`}>
                                         {formatTime(message.timestamp)}
                                     </span>
