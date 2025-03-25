@@ -250,7 +250,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                 </div>
                 {patientData && <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                     <button
-                        onClick={() => navigate(`/video-call?roomID=${patient?.roomID}`)}
+                        onClick={() => navigate(`/video-call?roomID=${patientData?.roomID}`)}
                         className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-lg text-lg font-medium shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
