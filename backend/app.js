@@ -8,7 +8,7 @@ import homeRouter from './src/routes/web.route.js';
 
 import { Server } from "socket.io";
 import http from 'http';
-import { getChatMessages, getQueueData } from './src/controllers/queue.controller.js';
+import { getChatMessages, getQueueData ,addChatMessage} from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
 
 
@@ -53,6 +53,20 @@ io.on("connection", (socket) => {
         const chat = await getChatMessages(roomId);
         io.to(String(roomId)).emit('chat-history', chat );
     });
+
+    socket.on("send-chat-message", async (data) => {
+        const { roomId, newChat } = data;
+        if (!roomId || !newChat) {
+            console.error('Invalid data received for sending message:', data);
+            return;
+        }
+        await addChatMessage(roomId, newChat);
+        console.log("message", newChat);
+        const chat = await getChatMessages(roomId);
+        io.to(String(roomId)).emit('chat-history', chat );
+    }
+    );
+
     
     // DND->OPD page one socket is also in queue controller
     socket.on("join-queue-room", async () => {
