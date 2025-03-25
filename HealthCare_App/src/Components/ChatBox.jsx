@@ -25,7 +25,8 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
     const socketRef = useRef(null);
     const chatContainerRef = useRef(null);
     const role=patientData?"Doctor":"Patient";  
-
+    // console.log(patientData);
+    
     useEffect(() => {
         // Create the socket instance only once
         if (!socketRef.current) {

@@ -6,8 +6,9 @@ export const VerifyToken = async (req, res, next) => {
     console.log("A new request to the server");
 
     let token = req.cookies.accessToken || req.header("Authorization")?.replace("Bearer ", "");
-
+    console.log("Token: ", token);
     if (!token) {
+        console.log("No token found");
         return res.status(401).json({ message: "Unauthorized, you need to login" });
     }
 

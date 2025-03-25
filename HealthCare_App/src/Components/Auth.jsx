@@ -14,7 +14,8 @@ function Auth({ children }) {
     const checkUser = async () => {
         try {
             const CurrentUser = await GetCurrentUser();
-
+            console.log("Current User in Auth.jsx: ", CurrentUser);
+            
             if (!CurrentUser || String(CurrentUser?.email).trim() !== String(user?.email).trim()) {
                 setUser(null);
                 console.log("User not found in database in Auth.jsx");

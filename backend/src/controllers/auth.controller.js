@@ -4,8 +4,8 @@ import { verifyGoogleToken } from '../config/google.js';
 
 const options = {
   httpOnly: true,
-  secure: true,
-  sameSite: 'None',
+  secure: process.env.NODE_ENV !== 'development',
+  sameSite: process.env.NODE_ENV !== 'development' ? 'None' : 'Lax',
 }
 
 

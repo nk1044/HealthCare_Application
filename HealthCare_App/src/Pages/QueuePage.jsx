@@ -230,7 +230,7 @@ function QueuePage() {
                     <ChatBox
                         roomId={roomIdForChat}
                         setShowChatBox={setShowChatBox}
-                        patientData={entries.find(entry => entry.Queue_Id === roomIdForChat)}
+                        patientData={entries.find(entry => entry.roomID === roomIdForChat)}
                     />
                 </div>
             )}
