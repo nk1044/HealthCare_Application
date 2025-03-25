@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
         console.log('User disconnected:', reason, socket.id);
     });
 
-    socket.io('leave-chat-room',(roomId)=>{
+    socket.on('leave-chat-room',(roomId)=>{
         socket.leave(roomId);
         console.log('User left room:', roomId);
     })

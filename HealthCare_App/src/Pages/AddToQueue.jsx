@@ -14,7 +14,6 @@ function AddToQueue() {
   const navigate = useNavigate();
   const user = useUser(useCallback(state => state.user, []));
   const [Queue_Id, setQueue_Id] = useState("");
-  const [roomID, setRoomID] = useState("");
 
   // Fetch user data
   useEffect(() => {
@@ -56,8 +55,6 @@ function AddToQueue() {
 
       if (res) {
         console.log("User added to queue successfully");
-        // Fetch and display queue data
-        setRoomID(res);
         const userData = await getDataByUser(user._id);
         if (userData && userData.userEntry) {
           setQueueData(userData.userEntry);
@@ -132,7 +129,7 @@ function AddToQueue() {
           </div>
 
           {/* Improved Chat Component */}
-          <ChatBox roomId={roomID}/>
+          <ChatBox roomId={queueData.roomID}/>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <button

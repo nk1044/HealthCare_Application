@@ -2,6 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from "socket.io-client";
 
+const socket = io(String(import.meta.env.VITE_BACKEND_URI));
+
+
 // Format time from timestamp
 const formatTime = (timestamp) => {
     if (!timestamp) return '';
@@ -15,184 +18,36 @@ const formatTime = (timestamp) => {
     }
 };
 
-// Format date for chat history headers
-const formatDate = (timestamp) => {
-    if (!timestamp) return '';
-    
-    try {
-        const date = new Date(timestamp);
-        return date.toLocaleDateString(undefined, { 
-            weekday: 'short', 
-            month: 'short', 
-            day: 'numeric' 
-        });
-    } catch (error) {
-        console.error("Error formatting date:", error);
-        return '';
-    }
-};
 
 function ChatBox({ roomId, setShowChatBox, patientData }) {
     const [chat, setChat] = useState([]);
     const [userMessage, setUserMessage] = useState("");
-    const [socketConnected, setSocketConnected] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
-    const socketRef = useRef(null);
     const chatContainerRef = useRef(null);
+    const [handleSendMessage, setHandleSendMessage] = useState(() => () => { });
+    const [socketConnected, setSocketConnected] = useState(false);
     const role = patientData ? "Doctor" : "Patient";
+    console.log("roomId", roomId);
     
-    // Initialize socket connection
-    useEffect(() => {
-        // Create the socket instance only once
-        if (!socketRef.current) {
-            socketRef.current = io(String(import.meta.env.VITE_BACKEND_URI), {
-                reconnectionAttempts: 5,
-                reconnectionDelay: 1000,
-                autoConnect: false, // Connect manually
-            });
-        }
-
-        // Socket connection handlers
-        const onConnect = () => {
-            console.log('Socket connected');
-            setSocketConnected(true);
-        };
-
-        const onDisconnect = () => {
-            console.log('Socket disconnected');
-            setSocketConnected(false);
-        };
-
-        const onConnectionError = (error) => {
-            console.error('Socket connection error:', error);
-            setSocketConnected(false);
-        };
-
-        // Set up event listeners
-        socketRef.current.on('connect', onConnect);
-        socketRef.current.on('disconnect', onDisconnect);
-        socketRef.current.on('connect_error', onConnectionError);
-
-        // Connect socket
-        socketRef.current.connect();
-
-        // Cleanup function
-        return () => {
-            socketRef.current.off('connect', onConnect);
-            socketRef.current.off('disconnect', onDisconnect);
-            socketRef.current.off('connect_error', onConnectionError);
-        };
-    }, []);
-
     // Join chat room when roomId changes
     useEffect(() => {
-        if (!roomId || !socketRef.current || !socketConnected) return;
-
-        console.log(`Joining chat room: ${roomId}`);
-        setIsLoading(true);
-        
-        // Leave any previous room first (good practice)
-        socketRef.current.emit("leave-chat-room", roomId);
-        
+        setSocketConnected(false);
+        socket.emit("leave-chat-room", roomId);
         // Join the new room
-        socketRef.current.emit("join-chat-room", roomId);
+        socket.emit("join-chat-room", roomId);
+        setSocketConnected(true);
+        socket.on("chat-history", (message) => {
+            console.log("chat-history", message);
+        });
 
         // Cleanup when component unmounts or roomId changes
         return () => {
-            if (socketRef.current && socketConnected) {
-                socketRef.current.emit("leave-chat-room", roomId);
+            if (socket && socketConnected) {
+                socket.emit("leave-chat-room", roomId);
             }
         };
-    }, [roomId, socketConnected]);
+    }, [roomId]);
 
-    // Handle chat messages and history
-    useEffect(() => {
-        if (!roomId || !socketRef.current || !socketConnected) return;
-
-        // Process received chat history
-        const onChatHistory = (data) => {
-            console.log("Received chat history:", data);
-            setIsLoading(false);
-            
-            if (Array.isArray(data)) {
-                const formattedMessages = data.map(msg => ({
-                    UserId: msg.sender,
-                    Message: msg.message,
-                    timestamp: msg.timestamp,
-                    date: new Date(msg.timestamp).toDateString() // For grouping by date
-                }));
-                
-                setChat(formattedMessages);
-                
-                // Scroll to bottom after loading history
-                setTimeout(() => {
-                    if (chatContainerRef.current) {
-                        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-                    }
-                }, 100);
-            }
-        };
-
-        // Process individual chat message
-        const onChatMessage = (data) => {
-            console.log("Received individual message:", data);
-            
-            const messageObject = {
-                UserId: data.userId,
-                Message: data.message,
-                timestamp: data.timestamp || new Date().toISOString(),
-                date: new Date(data.timestamp || new Date()).toDateString()
-            };
-            
-            setChat(prevChat => [...prevChat, messageObject]);
-        };
-
-        // Set up event listeners
-        socketRef.current.on("chat-history", onChatHistory);
-        socketRef.current.on("chat-message", onChatMessage);
-        
-        // Request chat history
-        socketRef.current.emit("get-chat-history", roomId);
-
-        // Cleanup function
-        return () => {
-            socketRef.current.off("chat-history", onChatHistory);
-            socketRef.current.off("chat-message", onChatMessage);
-        };
-    }, [roomId, socketConnected]);
-
-    // Auto-scroll to bottom when new messages arrive
-    useEffect(() => {
-        if (chatContainerRef.current && chat.length > 0) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-        }
-    }, [chat]);
-
-    // Send message handler
-    const handleSendMessage = () => {
-        if (userMessage.trim() === "" || !socketRef.current || !socketConnected) return;
-
-        const timestamp = new Date().toISOString();
-        const newMessage = {
-            UserId: role,
-            Message: userMessage.trim(),
-            timestamp: timestamp,
-            date: new Date(timestamp).toDateString()
-        };
-
-        // Update local state immediately for UI responsiveness
-        setChat(prevChat => [...prevChat, newMessage]);
-        setUserMessage("");
-
-        // Send message to server
-        socketRef.current.emit("send-chat-message", {
-            roomId: roomId,
-            userId: role,
-            message: userMessage.trim(),
-            timestamp: timestamp
-        });
-    };
 
     // Handle enter key press
     const handleKeyPress = (e) => {
@@ -201,6 +56,11 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
             handleSendMessage();
         }
     };
+
+    const handleClose = ()=>{
+        socket.emit("leave-chat-room", roomId);
+        setShowChatBox(false);
+    }
 
 
     return (
@@ -216,7 +76,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                 </span>
                 {patientData && (
                     <button
-                        onClick={() => setShowChatBox(false)}
+                        onClick={handleClose}
                         className="ml-2 p-1 rounded-full hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
                         aria-label="Close chat"
                     >
