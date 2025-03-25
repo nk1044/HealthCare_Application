@@ -8,7 +8,7 @@ import homeRouter from './src/routes/web.route.js';
 
 import { Server } from "socket.io";
 import http from 'http';
-import { getQueueData } from './src/controllers/queue.controller.js';
+import { getChatMessages, getQueueData } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
 
 
@@ -38,6 +38,23 @@ io.on("connection", (socket) => {
         console.log('User disconnected:', reason, socket.id);
     });
 
+    socket.io('leave-chat-room',(roomId)=>{
+        socket.leave(roomId);
+        console.log('User left room:', roomId);
+    })
+
+    socket.on('join-chat-room',async (roomId) => {
+        if(!roomId){
+            console.error('Invalid data received for joining room:', roomId);
+            return;
+        }
+        socket.join(String(roomId));
+        console.log("room id for chat room", String(roomId));
+        const chat = await getChatMessages(roomId);
+        io.to(String(roomId)).emit('chat-history', chat );
+    });
+    
+    // DND->OPD page one socket is also in queue controller
     socket.on("join-queue-room", async () => {
         socket.join(String(process.env.ROOM_ID));
         console.log("room id", String(process.env.ROOM_ID));
@@ -48,17 +65,7 @@ io.on("connection", (socket) => {
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
-    socket.on("joinChatRoom", async (Queue_Id) => {
-        console.log("Queue_Id", Queue_Id);
-        if (!Queue_Id) {
-            console.error('Invalid data received for joining chat room:', Queue_Id);
-            return;
-        }
-        socket.join(Queue_Id);
-        console.log("User Joined a chat Room");
-        socket.to(Queue_Id).emit('user-connected-chat-room', 'A new user connected to chat room');
-    });
-
+    //DND->BELOW function are for video call 👇
     socket.on('join-room', (data) => {
         const roomId = data?.roomId;
         const userId = data?.userId;
@@ -81,42 +88,35 @@ io.on("connection", (socket) => {
         socket.to(roomId).emit('user-connected', { userId });
     });
 
-    socket.on('send-message', (data) => {
-        const { roomId, userId, message } = data;
-        if (!roomId || !userId || !message) {
-            console.error('Invalid message data:', data);
-            return;
-        }
-        console.log(`Message from ${userId} in chat room ${roomId}: ${message}`);
-        socket.to(roomId).emit('receive-chat-message', { userId, message });
-    });
-
+    // DND
     socket.on("offer", ({ roomId, offer }) => {
         socket.to(roomId).emit("offer", { offer });
     });
 
+    // DND
     socket.on("answer", ({ roomId, answer }) => {
         socket.to(roomId).emit("answer", { answer });
     });
 
+    // DND
     socket.on("ice-candidate", ({ roomId, candidate }) => {
         socket.to(roomId).emit("ice-candidate", { candidate });
     });
 
-    socket.on('leave-room', ({ roomId, userId }) => {
-        console.log(`User ${userId} leaving room ${roomId}`);
-        socket.leave(roomId);
-        socket.to(roomId).emit('user-disconnected', { userId });
-    });
-
-    socket.on('send-stream', (data) => {
-        const { roomId, userId, stream } = data;
-        if (!roomId || !userId || !stream) {
-            console.error('Invalid data received for sending stream:', data);
-            return;
-        }
-        socket.to(roomId).emit('receive-stream', { userId, stream });
-    });
+    // TODO:REMOVE
+    // socket.on('leave-room', ({ roomId, userId }) => {
+    //     console.log(`User ${userId} leaving room ${roomId}`);
+    //     socket.leave(roomId);
+    //     socket.to(roomId).emit('user-disconnected', { userId });
+    // });
+    // socket.on('send-stream', (data) => {
+    //     const { roomId, userId, stream } = data;
+    //     if (!roomId || !userId || !stream) {
+    //         console.error('Invalid data received for sending stream:', data);
+    //         return;
+    //     }
+    //     socket.to(roomId).emit('receive-stream', { userId, stream });
+    // });
 });
 
 
