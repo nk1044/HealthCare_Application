@@ -1,12 +1,8 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from "socket.io-client";
-import { DeleteQueueEntry } from '../Server/Server';
 
-const socket = io(String(import.meta.env.VITE_BACKEND_URI));
-
-const tags = ['All', 'General', 'ENT', 'Dentist'];
-
+// Format time from timestamp
 const formatTime = (timestamp) => {
     if (!timestamp) return '';
 
@@ -14,30 +10,50 @@ const formatTime = (timestamp) => {
         const date = new Date(timestamp);
         return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     } catch (error) {
+        console.error("Error formatting time:", error);
         return '';
     }
 };
+
+// Format date for chat history headers
+const formatDate = (timestamp) => {
+    if (!timestamp) return '';
+    
+    try {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString(undefined, { 
+            weekday: 'short', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    } catch (error) {
+        console.error("Error formatting date:", error);
+        return '';
+    }
+};
+
 function ChatBox({ roomId, setShowChatBox, patientData }) {
     const [chat, setChat] = useState([]);
     const [userMessage, setUserMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
     const socketRef = useRef(null);
     const chatContainerRef = useRef(null);
-    const role=patientData?"Doctor":"Patient";  
-    // console.log(patientData);
+    const role = patientData ? "Doctor" : "Patient";
     
+    // Initialize socket connection
     useEffect(() => {
         // Create the socket instance only once
         if (!socketRef.current) {
             socketRef.current = io(String(import.meta.env.VITE_BACKEND_URI), {
                 reconnectionAttempts: 5,
                 reconnectionDelay: 1000,
-                autoConnect: false, // We'll connect manually when needed
+                autoConnect: false, // Connect manually
             });
         }
 
-        // Socket connection event handlers
+        // Socket connection handlers
         const onConnect = () => {
             console.log('Socket connected');
             setSocketConnected(true);
@@ -58,7 +74,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
         socketRef.current.on('disconnect', onDisconnect);
         socketRef.current.on('connect_error', onConnectionError);
 
-        // Connect the socket
+        // Connect socket
         socketRef.current.connect();
 
         // Cleanup function
@@ -66,96 +82,115 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
             socketRef.current.off('connect', onConnect);
             socketRef.current.off('disconnect', onDisconnect);
             socketRef.current.off('connect_error', onConnectionError);
-
-            // Don't disconnect here - we'll handle that separately
         };
     }, []);
 
-    // Handle chat room joining when roomId changes
+    // Join chat room when roomId changes
     useEffect(() => {
         if (!roomId || !socketRef.current || !socketConnected) return;
 
         console.log(`Joining chat room: ${roomId}`);
-
+        setIsLoading(true);
+        
         // Leave any previous room first (good practice)
-        socketRef.current.emit("leaveChatRoom", roomId);
-
+        socketRef.current.emit("leave-chat-room", roomId);
+        
         // Join the new room
-        socketRef.current.emit("joinChatRoom", roomId);
+        socketRef.current.emit("join-chat-room", roomId);
 
-        // Request chat history when joining a room
-        socketRef.current.emit("getChatHistory", roomId);
-
-        // Clean up when component unmounts or roomId changes
+        // Cleanup when component unmounts or roomId changes
         return () => {
             if (socketRef.current && socketConnected) {
-                socketRef.current.emit("leaveChatRoom", roomId);
+                socketRef.current.emit("leave-chat-room", roomId);
             }
         };
     }, [roomId, socketConnected]);
 
-    // Handle chat message events
+    // Handle chat messages and history
     useEffect(() => {
-        if (!socketRef.current) return;
+        if (!roomId || !socketRef.current || !socketConnected) return;
 
-        // Handle receiving a new message
-        const onReceiveMessage = (data) => {
+        // Process received chat history
+        const onChatHistory = (data) => {
+            console.log("Received chat history:", data);
+            setIsLoading(false);
+            
+            if (Array.isArray(data)) {
+                const formattedMessages = data.map(msg => ({
+                    UserId: msg.sender,
+                    Message: msg.message,
+                    timestamp: msg.timestamp,
+                    date: new Date(msg.timestamp).toDateString() // For grouping by date
+                }));
+                
+                setChat(formattedMessages);
+                
+                // Scroll to bottom after loading history
+                setTimeout(() => {
+                    if (chatContainerRef.current) {
+                        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                    }
+                }, 100);
+            }
+        };
 
+        // Process individual chat message
+        const onChatMessage = (data) => {
+            console.log("Received individual message:", data);
+            
             const messageObject = {
-                UserId: data.userId || data.UserId,
-                Message: data.message || data.Message,
-                timestamp: new Date().toISOString()
+                UserId: data.userId,
+                Message: data.message,
+                timestamp: data.timestamp || new Date().toISOString(),
+                date: new Date(data.timestamp || new Date()).toDateString()
             };
-
+            
             setChat(prevChat => [...prevChat, messageObject]);
         };
 
-
-        // Handle receiving chat history
-        const onChatHistory = (history) => {
-            console.log("Received chat history:", history);
-            setChat(history || []);
-        };
-
         // Set up event listeners
-        socketRef.current.on("receive-chat-message", onReceiveMessage);
         socketRef.current.on("chat-history", onChatHistory);
+        socketRef.current.on("chat-message", onChatMessage);
+        
+        // Request chat history
+        socketRef.current.emit("get-chat-history", roomId);
 
         // Cleanup function
         return () => {
-            socketRef.current.off("receive-chat-message", onReceiveMessage);
             socketRef.current.off("chat-history", onChatHistory);
+            socketRef.current.off("chat-message", onChatMessage);
         };
-    }, []);
+    }, [roomId, socketConnected]);
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
-        if (chatContainerRef.current) {
+        if (chatContainerRef.current && chat.length > 0) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
     }, [chat]);
 
+    // Send message handler
     const handleSendMessage = () => {
         if (userMessage.trim() === "" || !socketRef.current || !socketConnected) return;
 
+        const timestamp = new Date().toISOString();
         const newMessage = {
-            UserId: patientData ? "Doctor" : "Patient",
+            UserId: role,
             Message: userMessage.trim(),
-            timestamp: new Date().toISOString()
+            timestamp: timestamp,
+            date: new Date(timestamp).toDateString()
         };
 
         // Update local state immediately for UI responsiveness
         setChat(prevChat => [...prevChat, newMessage]);
         setUserMessage("");
-        console.log(chat);
-        
 
         // Send message to server
-        socketRef.current.emit("send-message", {
+        socketRef.current.emit("send-chat-message", {
             roomId: roomId,
-            userId: patientData ? "Doctor" : "Patient",
+            userId: role,
             message: userMessage.trim(),
-            timestamp: newMessage.timestamp
+            timestamp: timestamp
         });
     };
 
@@ -167,19 +202,20 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
         }
     };
 
+
     return (
-        <>
-            <div className="bg-white border rounded-lg shadow-md overflow-hidden pb-2">
-                {/* Chat Header */}
-                <div className="bg-blue-600 text-white p-3 flex items-center justify-between">
-                    <div className="flex items-center">
-                        <div className={`h-3 w-3 rounded-full mr-2 ${socketConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
-                        <h3 className="font-medium">Chat with {patientData ? "Patient" : "Doctor"} </h3>
-                    </div>
-                    <span className="text-xs bg-blue-700 px-2 py-1 rounded">
-                        {socketConnected ? 'Connected' : 'Reconnecting...'}
-                    </span>
-                    {patientData && <button
+        <div className="bg-white border rounded-lg shadow-md overflow-hidden pb-2">
+            {/* Chat Header */}
+            <div className="bg-blue-600 text-white p-3 flex items-center justify-between">
+                <div className="flex items-center">
+                    <div className={`h-3 w-3 rounded-full mr-2 ${socketConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                    <h3 className="font-medium">Chat with {patientData ? "Patient" : "Doctor"}</h3>
+                </div>
+                <span className="text-xs bg-blue-700 px-2 py-1 rounded">
+                    {socketConnected ? 'Connected' : 'Reconnecting...'}
+                </span>
+                {patientData && (
+                    <button
                         onClick={() => setShowChatBox(false)}
                         className="ml-2 p-1 rounded-full hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-white"
                         aria-label="Close chat"
@@ -187,69 +223,78 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                         </svg>
-                    </button>}
-                </div>
+                    </button>
+                )}
+            </div>
 
-                {/* Chat Messages Container */}
-                <div
-                    ref={chatContainerRef}
-                    className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50"
-                    style={{ scrollBehavior: "smooth" }}
-                >
-                    {chat.length === 0 ? (
-                        <div className="flex items-center justify-center h-full">
-                            <p className="text-gray-500 text-sm italic">No messages yet. Start the conversation!</p>
-                        </div>
-                    ) : (
-                        chat.map((message, index) => (
-                            <div key={index} className={`flex w-full ${message.UserId != role ? "justify-start" : "justify-end"}`}>
-                                <div className={`relative max-w-[75%] px-4 py-2 rounded-lg shadow-sm ${message.UserId != role
+            {/* Chat Messages Container */}
+            <div
+                ref={chatContainerRef}
+                className="h-80 overflow-y-auto p-4 space-y-3 bg-gray-50"
+                style={{ scrollBehavior: "smooth" }}
+            >
+                {chat.length === 0 ? (
+                    <div className="flex items-center justify-center h-full">
+                        <p className="text-gray-500 text-sm italic">No messages yet. Start the conversation!</p>
+                    </div>
+                ) : (
+                    chat.map((message, index) => (
+                        <div key={index} className={`flex w-full ${message.UserId !== role ? "justify-start" : "justify-end"}`}>
+                            <div className={`relative max-w-[75%] px-4 py-2 rounded-lg shadow-sm ${
+                                message.UserId !== role
                                     ? "bg-white border border-gray-200 text-gray-800"
                                     : "bg-blue-600 text-white"
-                                    }`}>
-                                    <p className="text-sm mb-2">{message.Message}</p>
-                                    <span className={`absolute bottom-0 ${message.UserId == role ? "right-1" : "left-1"
-                                        } text-xs opacity-70`}>
-                                        {formatTime(message.timestamp)}
-                                    </span>
-                                </div>
+                                }`}
+                            >
+                                <p className="text-sm mb-2">{message.Message}</p>
+                                <span className={`absolute bottom-0 ${
+                                    message.UserId === role ? "right-1" : "left-1"
+                                    } text-xs opacity-70`}
+                                >
+                                    {formatTime(message.timestamp)}
+                                </span>
                             </div>
-                        ))
-                    )}
-                </div>
+                        </div>
+                    ))
+                )}
+            </div>
 
-                {/* Message Input */}
-                <div className="p-3 border-t bg-white">
-                    <div className="flex items-center space-x-2">
-                        <input
-                            value={userMessage}
-                            onChange={(e) => setUserMessage(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder={socketConnected ? "Type your message..." : "Reconnecting..."}
-                            disabled={!socketConnected}
-                            className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                        />
-                        <button
-                            onClick={handleSendMessage}
-                            disabled={!userMessage.trim() || !socketConnected}
-                            className={`px-4 py-2 rounded-lg text-white ${userMessage.trim() && socketConnected
+            {/* Message Input */}
+            <div className="p-3 border-t bg-white">
+                <div className="flex items-center space-x-2">
+                    <input
+                        value={userMessage}
+                        onChange={(e) => setUserMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder={socketConnected ? "Type your message..." : "Reconnecting..."}
+                        disabled={!socketConnected}
+                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                    />
+                    <button
+                        onClick={handleSendMessage}
+                        disabled={!userMessage.trim() || !socketConnected}
+                        className={`px-4 py-2 rounded-lg text-white ${
+                            userMessage.trim() && socketConnected
                                 ? "bg-blue-600 hover:bg-blue-700"
                                 : "bg-blue-400 cursor-not-allowed"
-                                } transition-colors shadow-sm`}
+                            } transition-colors shadow-sm`}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            style={{ transform: "rotate(90deg)" }}
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                style={{ transform: "rotate(90deg)" }}
-                            >
-                                <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                            </svg>
-                        </button>
-                    </div>
+                            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                        </svg>
+                    </button>
                 </div>
-                {patientData && <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            </div>
+
+            {/* Video Call Button (only for doctor view) */}
+            {patientData && (
+                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                     <button
                         onClick={() => navigate(`/video-call?roomID=${patientData?.roomID}`)}
                         className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-lg text-lg font-medium shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
@@ -259,9 +304,9 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                         </svg>
                         Join Video Call
                     </button>
-                </div>}
-            </div>
-        </>
+                </div>
+            )}
+        </div>
     );
 }
 

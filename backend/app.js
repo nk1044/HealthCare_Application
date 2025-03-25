@@ -10,7 +10,6 @@ import { Server } from "socket.io";
 import http from 'http';
 import { getQueueData } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
-import { log } from 'console';
 
 
 const app = express();

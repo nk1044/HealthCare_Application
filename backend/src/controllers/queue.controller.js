@@ -99,11 +99,67 @@ const getQueueByUser = async (req, res) => {
     }
 }
 
+const getChatMessages = async (roomID) => {
+    try {
+        const numericRoomID = Number(roomID);
+
+        // Find the queue document that contains the room
+        const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });
+
+        if (!queue) {
+            return { message: "Queue entry does not exist" };
+        }
+
+        // Find the specific entry inside the queue
+        let entry = queue.Entries.find(e => e.roomID === numericRoomID);
+        if (!entry || entry.chat.length === 0) {
+            return { message: "No chat messages found for this room" };
+        }
+
+        return { chatMessages: entry.chat };
+    } catch (error) {
+        console.error(error);
+        return { error: "Error getting chat messages" };
+    }
+};
+
+
+const addChatMessage = async (roomID, message) => {
+    try {
+        const numericRoomID = Number(roomID);
+
+        // Find the queue entry that contains this roomID
+        const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });
+
+        if (!queue) {
+            return { message: "Queue entry does not exist" };
+        }
+
+        // Find the specific entry inside the queue
+        let entry = queue.Entries.find(e => e.roomID === numericRoomID);
+        if (!entry) {
+            return { message: "No matching room found" };
+        }
+
+        // Add the new chat message
+        entry.chat.push(message);
+
+        // Save the updated queue document
+        await queue.save();
+
+        return { messages: entry.chat };
+    } catch (error) {
+        console.error(error);
+        return { error: "Error adding chat message" };
+    }
+};
 
 
 export {
     AddEntryToQueue,
     getQueueData,
     RemoveEntryFromQueue,
-    getQueueByUser
+    getQueueByUser,
+    getChatMessages,
+    addChatMessage
 }
