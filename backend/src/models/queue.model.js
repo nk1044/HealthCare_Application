@@ -1,32 +1,42 @@
-import mongoose, {Schema, model} from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 
 const queueSchema = new Schema({
-    tag:{
+    tag: {
         type: String,
-        default: 'ENT',
         enum: ['Dentist', 'ENT', 'General'],
+        default: 'ENT'
     },
-    Entries:{
+    Entries: {
         type: [{
             user: {
                 type: Schema.Types.ObjectId,
-                ref: 'User'
+                ref: 'User',
+                required: true
             },
             tag: {
                 type: String,
-                default: 'ENT',
                 enum: ['Dentist', 'ENT', 'General'],
+                default: 'ENT'
             },
             description: {
                 type: String,
                 default: 'No description provided',
             },
-            roomID:{
-                type:Number,
+            roomID: {
+                type: Number,
+                required: true
+            },
+            chat: {
+                type: [{
+                    sender: { type: String, required: true },
+                    message: { type: String, required: true },
+                    timestamp: { type: Date, default: Date.now }
+                }],
+                default: []
             }
         }],
         default: []
     }
-}, {timestamps: true});
+}, { timestamps: true });
 
 export const Queue = model('Queue', queueSchema);
