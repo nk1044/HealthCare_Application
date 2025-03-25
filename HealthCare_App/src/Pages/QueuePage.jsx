@@ -16,7 +16,7 @@ function QueuePage() {
     const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showChatBox, setShowChatBox] = useState(false);
-    const [queueIdForChat, setQueueIdForChat] = useState("")
+    const [roomIdForChat, setroomIdForChat] = useState("")
 
 
     useEffect(() => {
@@ -198,7 +198,7 @@ function QueuePage() {
                                             <button
                                                 className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-150"
                                                 onClick={() => (
-                                                    setQueueIdForChat(entry.Queue_Id),
+                                                    setroomIdForChat(entry.roomID),
                                                     setShowChatBox(true)
                                                 )}
                                             >
@@ -228,9 +228,9 @@ function QueuePage() {
             {showChatBox && (
                 <div className='fixed bottom-6 left-6 z-50 w-1/2 h-fit bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden transition-all duration-300 ease-in-out animate-slide-up'>
                     <ChatBox
-                        roomId={queueIdForChat}
+                        roomId={roomIdForChat}
                         setShowChatBox={setShowChatBox}
-                        patientData={entries.find(entry => entry.Queue_Id === queueIdForChat)}
+                        patientData={entries.find(entry => entry.Queue_Id === roomIdForChat)}
                     />
                 </div>
             )}

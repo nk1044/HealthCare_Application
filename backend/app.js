@@ -10,6 +10,7 @@ import { Server } from "socket.io";
 import http from 'http';
 import { getQueueData } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
+import { log } from 'console';
 
 
 const app = express();
@@ -49,6 +50,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("joinChatRoom", async (Queue_Id) => {
+        console.log("Queue_Id", Queue_Id);
         if (!Queue_Id) {
             console.error('Invalid data received for joining chat room:', Queue_Id);
             return;
