@@ -4,10 +4,11 @@ import { verifyGoogleToken } from '../config/google.js';
 
 const options = {
   httpOnly: true,
-  // secure: process.env.NODE_ENV === 'production',
-  // sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   maxAge: 24 * 60 * 60 * 1000,
-}
+};
+
 
 
 const GenerateToken = async (userId) => {
