@@ -2,15 +2,19 @@ import { User } from '../models/user.model.js';
 import { verifyGoogleToken } from '../config/google.js';
 // import {redis} from '../config/redis.js'
 
+// const options = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === "production",
+//   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+//   maxAge: 24 * 60 * 60 * 1000,
+// };
 const options = {
-  httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
-  maxAge: 24 * 60 * 60 * 1000,
 };
 
 
-
+ 
 const GenerateToken = async (userId) => {
   const user = await User.findById(userId);
   const AccessToken = await user.GenerateAccessToken();
