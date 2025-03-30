@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useUser } from '../Store/zustand.js';
 
 axios.defaults.withCredentials = true;
 
@@ -6,7 +7,7 @@ const backend_url = String(import.meta.env.VITE_BACKEND_URI);
 
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    const token = useUser.getState().token;
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -19,9 +20,12 @@ axios.interceptors.request.use(
 
 const handleAuthResponse = (response) => {
   if (response?.data?.cookie) {
-    localStorage.setItem('accessToken', response.data.cookie);
-    
-    return response.data.user;
+    const token = response.data.cookie;
+    useUser.setState((state) => ({
+      ...state,
+      token: token 
+    }));
+    return response.data.user ?? null;
   }
   return null;
 };
@@ -47,6 +51,7 @@ const LoginUser = async (data) => {
       { ...data }, 
       { withCredentials: true }
     );
+    console.log(response.data);
     
     return handleAuthResponse(response);
   } catch (err) {
@@ -76,10 +81,6 @@ const LogOut = async () => {
       `${backend_url}/api/users/logout-user`, 
       { withCredentials: true }
     );
-    
-    // Clear token from localStorage
-    localStorage.removeItem('accessToken');
-    
     
     return data;
   } catch (err) {
