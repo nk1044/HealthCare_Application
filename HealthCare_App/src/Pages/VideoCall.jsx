@@ -383,7 +383,7 @@ useEffect(() => {
     setIsVideoOff(false);
     
     // Navigate back to home or another page
-    navigate('/');
+    navigate('/add-to-queue');
   };
  
   return (
