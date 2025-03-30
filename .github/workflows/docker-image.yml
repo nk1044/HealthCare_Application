@@ -22,3 +22,12 @@ jobs:
 
       - name: Push Docker image to Docker Hub
         run: docker push neerajkumar1044/health-care-application:01
+
+      - name: Deploy on render
+        if: github.ref == 'refs/heads/main'
+        env:
+          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$deploy_url"
+
+    
