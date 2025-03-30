@@ -14,7 +14,8 @@ const GoogleAuthLogin = async (response) => {
       `${backend_url}/api/users/google-auth`,
       { token: credential }
     );
-    // console.log(data?.data?.user);
+    // console.log(data?.data);
+    document.cookie=`accessToken=${data?.data.cookie}`
     return data?.data?.user;
   } catch (err) {
     console.log('Google authentication failed or user already exists', err);
@@ -26,6 +27,7 @@ const LoginUser = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/users/login-user`, { ...data }, { withCredentials: true });
     // console.log("login data:- ", response);
+    document.cookie=`accessToken=${response.data.cookie}`
     return response?.data?.user;
   } catch (err) {
     console.log('LoginUser failed', err);
@@ -37,6 +39,7 @@ const RegisterUser = async (data) => {
   try {
     const response = await axios.post(`${backend_url}/api/users/register-user`, { ...data }, { withCredentials: true });
     // console.log("register data:- ", response);
+    document.cookie=`accessToken=${response.data.cookie}`
     return response?.data?.user;
   } catch (err) {
     console.log('RegisterUser failed', err);
@@ -47,6 +50,7 @@ const LogOut = async () => {
   try {
     const data = await axios.get(`${backend_url}/api/users/logout-user`, { withCredentials: true });
     // console.log("logout data:- ", data);
+    document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     return data;
   } catch (err) {
     console.log('Logout failed', err);

@@ -53,7 +53,7 @@ const registerUser = async (req, res) => {
     res
       .status(200)
       .cookie("accessToken", AccessToken, options)
-      .json({ message: "User created successfully", user: FetchedUser });
+      .json({ message: "User created successfully", user: FetchedUser,cookie:AccessToken });
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
@@ -76,11 +76,13 @@ const loginUser = async (req, res) => {
 
     const AccessToken = await GenerateToken(user?._id);
     const FetchedUser = await User.findById(user._id).select("-password -refreshToken");
-    
+    res.set("Authorization", `Bearer ${AccessToken}`);
+    // Also set the header in lowercase to be safe
+    res.set("authorization", `Bearer ${AccessToken}`);
     res
       .status(200)
       .cookie("accessToken", AccessToken, options)
-      .json({ message: "User logged in successfully", user: FetchedUser});
+      .json({ message: "User logged in successfully", user: FetchedUser,cookie:AccessToken});
 
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });
@@ -113,7 +115,7 @@ const googleAuth = async (req, res) => {
     res
       .status(200)
       .cookie("accessToken", AccessToken, options)
-      .json({ message: "User created successfully", user: FetchedUser });
+      .json({ message: "User created successfully", user: FetchedUser,cookie:AccessToken });
 
   } catch (err) {
     res.status(400).json({ message: 'Google authentication failed', error: err });
