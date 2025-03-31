@@ -83,8 +83,8 @@ function Dashboard() {
               <div className="transition-all cursor-pointer duration-200 hover:shadow-lg"
                 onClick={() => navigate('/add-to-queue')}>
                 <MedCard
-                  title={"Online Cunsultation"}
-                  description={"Skip the travel! Take Online Doctor Cunsultation"}
+                  title={"Online Consultation"}
+                  description={"Skip the travel! Take Online Doctor Consultation"}
                   image_url={"https://png.pngtree.com/png-vector/20240124/ourmid/pngtree-doctor-consult-patient-online-on-mobile-phone-png-image_11486770.png"} />
               </div>
               <div className="transition-all cursor-pointer duration-200 hover:shadow-lg"
