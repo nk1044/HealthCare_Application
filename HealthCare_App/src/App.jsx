@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Layout from './Pages/Layout';
 import Auth from './Components/Auth';
 import Loading from './Pages/Loading';
+import NotFound from './Pages/NotFound';
 
 // Lazy load all pages
 const Home = lazy(() => import('./Pages/Home'));
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { path: '/video-call', element: <Suspense fallback={<div>Loading...</div>}><Auth><VideoCall /></Auth></Suspense> },
     ],
   },
+  { path: '*', element: <NotFound /> },
 ]);
 
 function App() {
