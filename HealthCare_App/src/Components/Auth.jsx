@@ -40,7 +40,12 @@ function Auth({ children }) {
                 console.log("User not found in Auth.jsx");
                 navigate("/login-user");
             }
-            // console.log(CurrentUser?.name);
+            if(user.role=='user'){
+                if (location.pathname === "/queue-page") {
+                    navigate("/add-to-queue");
+                }
+            }
+
             setLoader(false);
         };
 

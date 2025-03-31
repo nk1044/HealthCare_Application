@@ -383,7 +383,13 @@ useEffect(() => {
     setIsVideoOff(false);
     
     // Navigate back to home or another page
-    navigate('/add-to-queue');
+    console.log(user.role);
+    
+    if(user.role=='user'){
+      navigate('/add-to-queue');
+    }else{
+      navigate('/queue-page')
+    }
   };
  
   return (
