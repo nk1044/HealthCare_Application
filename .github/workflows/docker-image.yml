@@ -1,33 +1,33 @@
-name: Docker Image CI
+# name: Docker Image CI
 
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+# on:
+#   push:
+#     branches: ["main"]
+#   pull_request:
+#     branches: ["main"]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+#       - name: Log in to Docker Hub
+#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Build the Docker image
-        run: docker build --platform linux/amd64 -t neerajkumar1044/health-care-application:01 ./backend
+#       - name: Build the Docker image
+#         run: docker build --platform linux/amd64 -t neerajkumar1044/health-care-application:01 ./backend
 
-      - name: Push Docker image to Docker Hub
-        run: docker push neerajkumar1044/health-care-application:01
+#       - name: Push Docker image to Docker Hub
+#         run: docker push neerajkumar1044/health-care-application:01
 
-      - name: Deploy on render
-        if: github.ref == 'refs/heads/main'
-        env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          curl "$deploy_url"
+#       - name: Deploy on render
+#         if: github.ref == 'refs/heads/main'
+#         env:
+#           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+#         run: |
+#           curl "$deploy_url"
 
     
