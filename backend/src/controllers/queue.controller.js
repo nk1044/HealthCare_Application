@@ -1,6 +1,7 @@
 import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
 import { User } from "../models/user.model.js";
+import { createChat, addMessage } from "./chat.controller.js";
 
 const getQueueData = async (onlineUsers) => {
     const queue = await Queue.find();
@@ -9,9 +10,11 @@ const getQueueData = async (onlineUsers) => {
     }
     const queueData = queue.map((entry) => {
         return {
+            _id: entry._id,
             tag: entry.tag,
             Entries: entry.Entries.map((e) => {
                 return {
+                    _id: e._id,
                     user: e.user,
                     doctorId: e.doctorId,
                     description: e.description,
@@ -34,6 +37,12 @@ const AddEntryToQueue = async (req, res) => {
     try {
         const { tag, doctorId, description } = req.body;
         const userId = req?.user?._id;
+
+        const chat = await createChat({ tag, doctorId, userId, description });
+        if (!chat) {
+            return res.status(400).json({ message: "Error creating chat" });
+        }
+
         const queue = await Queue.findOne({ tag: tag });
         const randomRoomID = Math.floor(Math.random() * 100000);
         if (!queue) {
@@ -44,7 +53,8 @@ const AddEntryToQueue = async (req, res) => {
                     tag: tag,
                     doctorId: doctorId,
                     description: description,
-                    roomID: randomRoomID
+                    roomID: randomRoomID,
+                    chatId: chat?._id,
                 }]
             });
         } else {
@@ -53,12 +63,14 @@ const AddEntryToQueue = async (req, res) => {
                 tag: tag,
                 doctorId: doctorId,
                 description: description,
-                roomID: randomRoomID
+                roomID: randomRoomID,
+                chatId: chat?._id,
             });
             await queue.save({ validateBeforeSave: false });
         }
+        
         const queueData = await getQueueData();
-        io.to(String(process.env.ROOM_ID)).emit('queue-data', queueData);
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', {...queueData, chatId: chat?._id});
 
         res
             .status(200)
@@ -150,9 +162,10 @@ const getChatMessages = async (roomID) => {
 };
 
 
-const addChatMessage = async (roomID, message) => {
+const addChatMessage = async (roomID, message, chatId='') => {
     try {
         const numericRoomID = Number(roomID);
+        addMessage({ chatId: chatId, sender: message.sender, message: message.message });
 
         // Find the queue entry that contains this roomID
         const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });

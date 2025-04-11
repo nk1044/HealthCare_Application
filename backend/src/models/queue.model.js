@@ -13,6 +13,11 @@ const queueSchema = new Schema({
                 ref: 'User',
                 required: true
             },
+            chatId:{
+                type: Schema.Types.ObjectId,
+                ref: 'Chat',
+                required: true
+            },
             tag: {
                 type: String,
                 enum: ['Dentist', 'ENT', 'General'],
