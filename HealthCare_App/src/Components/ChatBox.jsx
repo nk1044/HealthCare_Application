@@ -1,6 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
+import { useUser } from "../Store/zustand";
 
 const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
@@ -24,11 +25,15 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
     const chatContainerRef = useRef(null);
     const [socketConnected, setSocketConnected] = useState(false);
     const role = patientData ? "Doctor" : "Patient";
+    
+    const user = useUser(useCallback(state => state.user, []));
 
+    
     // Join chat room when roomId changes
     useEffect(() => {
         setSocketConnected(false);
         socket.emit("leave-chat-room", roomId);
+        socket.emit("user-joined", user._id)
         socket.emit("join-chat-room", roomId);
         setSocketConnected(true);
 
