@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Loading from '../Pages/Loading.jsx';
 import { useUser } from '../Store/zustand.js';
 import ChatBox from '../Components/ChatBox.jsx';
+import toast, { Toaster } from 'react-hot-toast';
 import PopUp from '../Components/PopUp.jsx';
 
 function AddToQueue() {
@@ -46,8 +47,9 @@ function AddToQueue() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (tag === "" || description === "" || doctor === "") {
-      alert("Please fill all the fields");
+    if (tag === "" || description === "") {
+      // alert("Please fill all the fields");
+      toast.error("Please fill all the fields");
       return;
     }
 
@@ -68,11 +70,13 @@ function AddToQueue() {
           setQueue_Id(userData.queueId);
         }
       } else {
-        alert("Error adding user to queue");
+        // alert("Error adding user to queue");
+        toast.error("Error adding user to queue");
       }
     } catch (error) {
       console.error("Error in submission:", error);
-      alert("Error adding user to queue");
+      // alert("Error adding user to queue");
+      toast.error("Error adding user to queue");
     }
     setLoading(false);
   };
