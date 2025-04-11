@@ -2,7 +2,9 @@ import { Chat } from "../models/Chat.model.js";
 
 const createChat = async (data) => {
     const { tag, doctorId, userId, description, chat=[] } = data;
-
+    if (!tag || !doctorId || !userId || !description) {
+        return { message: "Tag, doctorId and userId are required", chat: null };
+    }
     try {
         const newChat = new Chat({
             tag,
@@ -37,7 +39,7 @@ const getUserChats = async (req, res) => {
     }
 }
 
-const addChatMessage = async (data) => {
+const addMessage = async (data) => {
     const { chatId, sender, message } = data;
     try {
         const chat = await Chat.findById(chatId);
@@ -74,6 +76,6 @@ const deleteChat = async (req, res) => {
 export {
     createChat,
     getUserChats,
-    addChatMessage,
+    addMessage,
     deleteChat
 }

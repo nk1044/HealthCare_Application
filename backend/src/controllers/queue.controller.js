@@ -1,6 +1,7 @@
 import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
 import { User } from "../models/user.model.js";
+import { createChat, addMessage } from "./chat.controller.js";
 
 const getQueueData = async (onlineUsers) => {
     const queue = await Queue.find();
@@ -57,8 +58,12 @@ const AddEntryToQueue = async (req, res) => {
             });
             await queue.save({ validateBeforeSave: false });
         }
+        const chat = await createChat({ tag, doctorId, userId, description });
+        if (!chat) {
+            return res.status(400).json({ message: "Error creating chat" });
+        }
         const queueData = await getQueueData();
-        io.to(String(process.env.ROOM_ID)).emit('queue-data', queueData);
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', {...queueData, chatId: chat?._id});
 
         res
             .status(200)
@@ -150,9 +155,10 @@ const getChatMessages = async (roomID) => {
 };
 
 
-const addChatMessage = async (roomID, message) => {
+const addChatMessage = async (roomID, message, chatId='') => {
     try {
         const numericRoomID = Number(roomID);
+        addMessage({ chatId:chatId, sender: message.sender, message: message.message });
 
         // Find the queue entry that contains this roomID
         const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });
