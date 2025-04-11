@@ -35,6 +35,12 @@ const AddEntryToQueue = async (req, res) => {
     try {
         const { tag, doctorId, description } = req.body;
         const userId = req?.user?._id;
+
+        const chat = await createChat({ tag, doctorId, userId, description });
+        if (!chat) {
+            return res.status(400).json({ message: "Error creating chat" });
+        }
+
         const queue = await Queue.findOne({ tag: tag });
         const randomRoomID = Math.floor(Math.random() * 100000);
         if (!queue) {
@@ -45,7 +51,8 @@ const AddEntryToQueue = async (req, res) => {
                     tag: tag,
                     doctorId: doctorId,
                     description: description,
-                    roomID: randomRoomID
+                    roomID: randomRoomID,
+                    chatId: chat?._id,
                 }]
             });
         } else {
@@ -54,14 +61,12 @@ const AddEntryToQueue = async (req, res) => {
                 tag: tag,
                 doctorId: doctorId,
                 description: description,
-                roomID: randomRoomID
+                roomID: randomRoomID,
+                chatId: chat?._id,
             });
             await queue.save({ validateBeforeSave: false });
         }
-        const chat = await createChat({ tag, doctorId, userId, description });
-        if (!chat) {
-            return res.status(400).json({ message: "Error creating chat" });
-        }
+        
         const queueData = await getQueueData();
         io.to(String(process.env.ROOM_ID)).emit('queue-data', {...queueData, chatId: chat?._id});
 
