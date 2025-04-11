@@ -12,7 +12,7 @@ function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [loading, setLoading] = useState(false);
     const [networkStatus, setNetworkStatus] = useState(navigator.onLine);
-    
+
     // Check if there was a redirect with error message
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -21,7 +21,7 @@ function Login() {
             setError(decodeURIComponent(errorMsg));
         }
     }, [location]);
-    
+
     // Monitor network status
     useEffect(() => {
         const handleOnline = () => setNetworkStatus(true);
@@ -29,10 +29,10 @@ function Login() {
             setNetworkStatus(false);
             setError('Network connection lost. Please check your internet connection.');
         };
-        
+
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
-        
+
         return () => {
             window.removeEventListener('online', handleOnline);
             window.removeEventListener('offline', handleOffline);
@@ -42,25 +42,25 @@ function Login() {
     const handleGoogleLogin = async (response) => {
         try {
             setLoading(true);
-            
+
             if (!response || !response.credential) {
                 throw new Error('Google authentication data is missing');
             }
-            
+
             const user = await GoogleAuthLogin(response);
-            
+
             if (!user) {
                 throw new Error('No response received from authentication server');
             }
-            
+
             if (user?.status === 400) {
                 setError(user?.error || 'Authentication failed. Please try again.');
                 return;
             }
-            
+
             await setUser(user);
             navigate('/');
-            
+
         } catch (error) {
             console.error('Google login error:', error);
             setError(error.message || 'Authentication failed. Please try again later.');
@@ -77,47 +77,47 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         // Input validation
         if (!formData.email || !formData.password) {
             setError('Please enter both email and password');
             return;
         }
-        
+
         // Email format validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
             setError('Please enter a valid email address');
             return;
         }
-        
+
         setLoading(true);
-        
+
         try {
             const user = await LoginUser(formData);
-            
+
             if (!user) {
                 throw new Error('No response received from server');
             }
-            
+
             if (user?.status === 400) {
                 setError(user?.error || 'Invalid credentials. Please try again.');
                 return;
-            } 
-            
+            }
+
             if (user?.status === 401) {
                 setError('Your account is not activated. Please check your email for activation instructions.');
                 return;
             }
-            
+
             if (user?.status === 500) {
                 throw new Error('Server error. Please try again later.');
             }
-            
+
             // Success case
             setUser(user);
             navigate('/');
-            
+
         } catch (error) {
             console.error('Login error:', error);
             setError(error.message || 'Login failed. Server may be unavailable. Please try again later.');
@@ -151,11 +151,11 @@ function Login() {
                                 onClick={() => navigate('/')}
                             />
                         </div>
-                        
+
                         <h2 className="text-2xl font-bold text-gray-800 mb-6">
                             Sign in to your account
                         </h2>
-                        
+
                         {error && (
                             <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm flex items-start">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -237,22 +237,23 @@ function Login() {
                                 </div>
                             </div>
 
-                            <div className="mt-6">
-                                <GoogleLogin
-                                    onSuccess={(response) => {
-                                        handleGoogleLogin(response);
-                                    }}
-                                    onError={() => {
-                                        setError('Google authentication failed. Please try again or use email login.');
-                                    }}
-                                    useOneTap
-                                    size="large"
-                                    width="100%"
-                                    text="signin_with"
-                                    shape="rectangular"
-                                    logo_alignment="center"
-                                    disabled={!networkStatus || loading}
-                                />
+                            <div className="mt-6 w-full">
+                                {/* Apply a wrapper div with full width and custom styling */}
+                                <div className="w-full flex justify-center">
+                                    <div style={{ width: '100%' }}>
+                                        <GoogleLogin
+                                            onSuccess={handleGoogleLogin}
+                                            onError={() => setError('Google authentication failed. Please try again or use email login.')}
+                                            useOneTap
+                                            size="large"
+                                            width="100%"
+                                            text="signin_with"
+                                            shape="rectangular"
+                                            logo_alignment="center"
+                                            disabled={!networkStatus || loading}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
