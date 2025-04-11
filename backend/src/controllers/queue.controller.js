@@ -9,7 +9,7 @@ const getQueueData = async () => {
 
 const AddEntryToQueue = async (req, res) => {
     try {
-        const { tag, description } = req.body;
+        const { tag, doctorId, description } = req.body;
         const userId = req?.user?._id;
         const queue = await Queue.findOne({ tag: tag });
         const randomRoomID = Math.floor(Math.random() * 100000);
@@ -19,6 +19,7 @@ const AddEntryToQueue = async (req, res) => {
                 Entries: [{
                     user: userId,
                     tag: tag,
+                    doctorId: doctorId,
                     description: description,
                     roomID: randomRoomID
                 }]
@@ -27,6 +28,7 @@ const AddEntryToQueue = async (req, res) => {
             queue.Entries.unshift({
                 user: userId,
                 tag: tag,
+                doctorId: doctorId,
                 description: description,
                 roomID: randomRoomID
             });

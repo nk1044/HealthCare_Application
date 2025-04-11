@@ -18,6 +18,11 @@ const queueSchema = new Schema({
                 enum: ['Dentist', 'ENT', 'General'],
                 default: 'ENT'
             },
+            doctorId: {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+                required: true
+            },
             description: {
                 type: String,
                 default: 'No description provided',
