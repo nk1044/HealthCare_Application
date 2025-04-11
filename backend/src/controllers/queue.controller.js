@@ -1,5 +1,6 @@
 import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
+import { User } from "../models/user.model.js";
 
 const getQueueData = async () => {
     const queue = await Queue.find();
@@ -154,6 +155,18 @@ const addChatMessage = async (roomID, message) => {
     }
 };
 
+const GetAllDoctors = async (req, res) => {
+    try {
+        const doctors = await User.find({ role: 'doctor' }).select('-password -refreshToken -__v -email -role -createdAt -updatedAt');
+        if (!doctors) {
+            return res.status(404).json({ message: "No doctors found", doctors: [] });
+        }
+        return res.status(200).json({ message: "All doctors fetched successfully", doctors: doctors });
+    } catch (error) {
+        res.status(500).json({ message: "Error while getting doctors", doctors: [] });
+    }
+}
+
 
 export {
     AddEntryToQueue,
@@ -161,5 +174,6 @@ export {
     RemoveEntryFromQueue,
     getQueueByUser,
     getChatMessages,
-    addChatMessage
+    addChatMessage,
+    GetAllDoctors
 }
