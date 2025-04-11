@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io } from "socket.io-client";
 import { DeleteQueueEntry } from '../Server/Server';
@@ -9,25 +9,25 @@ const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
 const tags = ['All', 'General', 'ENT', 'Dentist'];
 
-
 function QueuePage() {
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState([]);
     const [tag, setTag] = useState('All');
-    const [entries, setEntries] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showChatBox, setShowChatBox] = useState(false);
-    const [roomIdForChat, setroomIdForChat] = useState("")
+    const [roomIdForChat, setroomIdForChat] = useState("");
     const [isModalOpen, setModalOpen] = useState(false);
-
-
+    const [entries, setEntries] = useState([]);
+    const [allEntries, setAllEntries] = useState([]);
+    const [onlineEntries, setOnlineEntries] = useState([]);
+    const [whichQueue, setWhichQueue] = useState("All");
 
     useEffect(() => {
         try {
             socket.emit("join-queue-room");
 
             socket.on("queue-data", (data) => {
-                console.log("Queue Data received",data);
+                console.log("Queue Data received", data);
                 setData(data || []);
                 setLoading(false);
             });
@@ -46,28 +46,69 @@ function QueuePage() {
         };
     }, []);
 
-
     // Filter entries based on the selected tag
     const filterEntries = useCallback(() => {
         if (tag === 'All') {
-            setEntries(data.flatMap(entry => entry.Entries.map(e => ({ ...e, tag: entry.tag, Queue_Id: entry._id }))));
+            const newAllEntries = data.flatMap(entry =>
+                entry.Entries.map(e => ({
+                    ...e,
+                    tag: entry.tag,
+                    Queue_Id: entry._id
+                }))
+            );
+
+            const newOnlineEntries = data.flatMap(entry =>
+                entry.Entries
+                    .filter(e => e.status === 'online')
+                    .map(e => ({
+                        ...e,
+                        tag: entry.tag,
+                        Queue_Id: entry._id
+                    }))
+            );
+
+            setAllEntries(newAllEntries);
+            setOnlineEntries(newOnlineEntries);
         } else {
-            const filtered = data
+            const newAllEntries = data
                 .filter(entry => entry.tag === tag)
-                .flatMap(entry => entry.Entries.map(e => ({ ...e, tag: entry.tag })));
-            setEntries(filtered);
+                .flatMap(entry =>
+                    entry.Entries.map(e => ({
+                        ...e,
+                        tag: entry.tag,
+                        Queue_Id: entry._id
+                    }))
+                );
+
+            const newOnlineEntries = data
+                .filter(entry => entry.tag === tag)
+                .flatMap(entry =>
+                    entry.Entries
+                        .filter(e => e.status === 'online')
+                        .map(e => ({
+                            ...e,
+                            tag: entry.tag,
+                            Queue_Id: entry._id
+                        }))
+                );
+
+            setAllEntries(newAllEntries);
+            setOnlineEntries(newOnlineEntries);
         }
     }, [data, tag]);
 
-    // Apply filtering when `tag` or `data` changes
     useEffect(() => {
         filterEntries();
     }, [tag, data, filterEntries]);
 
+    useEffect(() => {
+        setEntries(whichQueue === "All" ? allEntries : onlineEntries);
+    }, [whichQueue, allEntries, onlineEntries]);
+
     const handleRemoveEntry = (data) => {
-        // console.log("Removing entry:", data);
-        DeleteQueueEntry(data)
+        DeleteQueueEntry(data);
     };
+
 
     const getTagColor = (tagName) => {
         switch (tagName) {
@@ -138,16 +179,37 @@ function QueuePage() {
 
                 {/* Queue List */}
                 <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-                    <div className="border-b border-gray-200 bg-gray-50 px-6 py-4">
-                        <h2 className="text-lg font-medium text-gray-900">
-                            Patients Waiting
-                            {entries.length > 0 && (
-                                <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                                    {entries.length}
-                                </span>
-                            )}
-                        </h2>
+                    <div className="border-b border-gray-200 bg-gray-50   flex space-x-4">
+                        <button
+                            className={`flex items-center space-x-2 text-lg font-medium px-4 py-2 rounded-md border 
+                                ${whichQueue === "Online"
+                                    ? "border-indigo-500 bg-indigo-100 text-indigo-800"
+                                    : "border-gray-300 text-gray-900 hover:border-indigo-300 hover:bg-indigo-50"
+                                }`}
+                            onClick={() => setWhichQueue("Online")}
+                        >
+                            <span>Online Patients</span>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-200 text-indigo-900">
+                                {onlineEntries.length}
+                            </span>
+                        </button>
+
+                        <button
+                            className={`flex items-center space-x-2 text-lg font-medium px-4 py-2 rounded-md border 
+                                ${whichQueue === "All"
+                                    ? "border-indigo-500 bg-indigo-100 text-indigo-800"
+                                    : "border-gray-300 text-gray-900 hover:border-indigo-300 hover:bg-indigo-50"
+                                }`}
+                            onClick={() => setWhichQueue("All")}
+                        >
+                            <span>All Patients</span>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-200 text-indigo-900">
+                                {allEntries.length}
+                            </span>
+                        </button>
                     </div>
+
+
 
                     {loading ? (
                         <div className="flex justify-center items-center p-12">

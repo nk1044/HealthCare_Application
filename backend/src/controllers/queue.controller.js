@@ -23,9 +23,9 @@ const getQueueData = async (onlineUsers) => {
             })
         };
     });
-    console.log(onlineUsers, "onlineUsers");
+    // console.log(onlineUsers, "onlineUsers");
 
-    console.log(queueData[1], "queueData");
+    // console.log(queueData[1], "queueData");
 
     return queueData
 }
