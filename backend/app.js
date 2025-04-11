@@ -5,6 +5,7 @@ import 'dotenv/config';
 import authRouter from './src/routes/auth.route.js';
 import queueRouter from './src/routes/queue.route.js';
 import homeRouter from './src/routes/web.route.js';
+import { userOnline } from './src/config/userOnline.js';
 
 import { Server } from "socket.io";
 import http from 'http';
@@ -35,8 +36,20 @@ app.set("trust proxy", 1);
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('disconnect', (reason) => {
-        console.log('User disconnected:', reason, socket.id);
+    socket.on('user-joined', (userId) => {
+        if (!userId) {
+            console.error('Invalid userId received:', userId);
+            return;
+        }
+        userOnline.addUser(userId, socket.id);
+        console.log("online users", userOnline.getOnlineUsers());
+    });
+
+    socket.on('disconnect', () => {
+        // Find and remove user from onlineUsers
+        userOnline.removeUserBySocketId(socket.id);
+        console.log("User Disconnected", socket.id);
+        console.log("online users", userOnline.getOnlineUsers());
     });
 
     socket.on('leave-chat-room',(roomId)=>{
@@ -116,20 +129,6 @@ io.on("connection", (socket) => {
         socket.to(roomId).emit("ice-candidate", { candidate });
     });
 
-    // TODO:REMOVE
-    // socket.on('leave-room', ({ roomId, userId }) => {
-    //     console.log(`User ${userId} leaving room ${roomId}`);
-    //     socket.leave(roomId);
-    //     socket.to(roomId).emit('user-disconnected', { userId });
-    // });
-    // socket.on('send-stream', (data) => {
-    //     const { roomId, userId, stream } = data;
-    //     if (!roomId || !userId || !stream) {
-    //         console.error('Invalid data received for sending stream:', data);
-    //         return;
-    //     }
-    //     socket.to(roomId).emit('receive-stream', { userId, stream });
-    // });
 });
 
 
