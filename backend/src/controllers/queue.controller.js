@@ -10,9 +10,11 @@ const getQueueData = async (onlineUsers) => {
     }
     const queueData = queue.map((entry) => {
         return {
+            _id: entry._id,
             tag: entry.tag,
             Entries: entry.Entries.map((e) => {
                 return {
+                    _id: e._id,
                     user: e.user,
                     doctorId: e.doctorId,
                     description: e.description,

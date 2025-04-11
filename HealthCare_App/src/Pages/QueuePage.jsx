@@ -227,6 +227,8 @@ function QueuePage() {
                                                         handleRemoveEntry({ Queue_Id: entry?.Queue_Id, userId: entry?.user });
                                                     }
                                                     setModalOpen(false);
+                                                    console.log({ Queue_Id: entry, userId: entry?.user });
+                                                    
                                                 }}
                                                 onCancel={() => setModalOpen(false)}
                                             />
