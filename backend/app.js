@@ -5,6 +5,7 @@ import 'dotenv/config';
 import authRouter from './src/routes/auth.route.js';
 import queueRouter from './src/routes/queue.route.js';
 import homeRouter from './src/routes/web.route.js';
+import chatRouter from './src/routes/chat.route.js';
 import { userOnline } from './src/config/userOnline.js';
 
 import { Server } from "socket.io";
@@ -147,5 +148,6 @@ app.use(bodyParser.json());
 app.use('/api/users', authRouter);
 app.use('/api/queue', queueRouter);
 app.use('/api/home', homeRouter);
+app.use('/api/chat', chatRouter);
 
 export default app;

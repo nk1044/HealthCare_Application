@@ -10,6 +10,10 @@ app.get('/health-check', (req, res) => {
     res.send('Server is running healthy 👍');
 });
 
+app.get('/', (req, res) => {
+    res.send('Unauthorized route');
+});
+
 
 client.collectDefaultMetrics({ register });
 app.get('/metrics', async (req, res) => {
