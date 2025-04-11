@@ -158,7 +158,7 @@ const getChatMessages = async (roomID) => {
 const addChatMessage = async (roomID, message, chatId='') => {
     try {
         const numericRoomID = Number(roomID);
-        addMessage({ chatId:chatId, sender: message.sender, message: message.message });
+        addMessage({ chatId: chatId, sender: message.sender, message: message.message });
 
         // Find the queue entry that contains this roomID
         const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });
