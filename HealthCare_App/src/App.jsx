@@ -19,7 +19,7 @@ const Contact = lazy(() => import('./Pages/Contact'));
 const QueuePage = lazy(() => import('./Pages/QueuePage'));
 const AddToQueue = lazy(() => import('./Pages/AddToQueue'));
 const VideoCall = lazy(() => import('./Pages/VideoCall'));
-
+// <Loading/>
 // Define router with lazy-loaded components
 const router = createBrowserRouter([
   {
@@ -30,21 +30,20 @@ const router = createBrowserRouter([
         path: '',
         element: <Suspense fallback={<Loading/>}><Home /></Suspense>,
         children: [
-          { path: '', element: <Suspense fallback={<div>Loading...</div>}><Dashboard /></Suspense> },
-          { path: '/user/profile', element: <Suspense fallback={<div>Loading...</div>}><Auth><Profile /></Auth></Suspense> },
-          { path: '/user/settings', element: <Suspense fallback={<div>Loading...</div>}><Auth><Settings /></Auth></Suspense> },
-          { path: '/about', element: <Suspense fallback={<div>Loading...</div>}><About /></Suspense> },
-          { path: '/services', element: <Suspense fallback={<div>Loading...</div>}><Services /></Suspense> },
-          { path: '/contact', element: <Suspense fallback={<div>Loading...</div>}><Contact /></Suspense> },
-          { path: '/queue-page', element: <Suspense fallback={<div>Loading...</div>}><Auth><QueuePage /></Auth></Suspense> },
-          { path: '/add-to-queue', element: <Suspense fallback={<div>Loading...</div>}><Auth><AddToQueue /></Auth></Suspense> },
-          // { path: '/video-call', element: <Suspense fallback={<div>Loading...</div>}><Auth><VideoCall /></Auth></Suspense> },
+          { path: '', element: <Suspense fallback={<Loading/>}><Dashboard /></Suspense> },
+          { path: '/user/profile', element: <Suspense fallback={<Loading/>}><Auth><Profile /></Auth></Suspense> },
+          { path: '/user/settings', element: <Suspense fallback={<Loading/>}><Auth><Settings /></Auth></Suspense> },
+          { path: '/about', element: <Suspense fallback={<Loading/>}><About /></Suspense> },
+          { path: '/services', element: <Suspense fallback={<Loading/>}><Services /></Suspense> },
+          { path: '/contact', element: <Suspense fallback={<Loading/>}><Contact /></Suspense> },
+          { path: '/queue-page', element: <Suspense fallback={<Loading/>}><Auth><QueuePage /></Auth></Suspense> },
+          { path: '/add-to-queue', element: <Suspense fallback={<Loading/>}><Auth><AddToQueue /></Auth></Suspense> },
         ],
       },
-      { path: 'login-user', element: <Suspense fallback={<div>Loading...</div>}><Login /></Suspense> },
-      { path: 'register-user', element: <Suspense fallback={<div>Loading...</div>}><Register /></Suspense> },
-      { path: 'reset-user-password', element: <Suspense fallback={<div>Loading...</div>}><Auth><ResetPassword /></Auth></Suspense> },
-      { path: '/video-call', element: <Suspense fallback={<div>Loading...</div>}><Auth><VideoCall /></Auth></Suspense> },
+      { path: 'login-user', element: <Suspense fallback={<Loading/>}><Login /></Suspense> },
+      { path: 'register-user', element: <Suspense fallback={<Loading/>}><Register /></Suspense> },
+      { path: 'reset-user-password', element: <Suspense fallback={<Loading/>}><Auth><ResetPassword /></Auth></Suspense> },
+      { path: '/video-call', element: <Suspense fallback={<Loading/>}><Auth><VideoCall /></Auth></Suspense> },
     ],
   },
   { path: '*', element: <NotFound /> },
