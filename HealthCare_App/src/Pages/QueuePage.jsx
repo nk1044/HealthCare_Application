@@ -27,9 +27,7 @@ function QueuePage() {
             socket.emit("join-queue-room");
 
             socket.on("queue-data", (data) => {
-                // console.log("Queue Data received");
-                // console.log(data);
-
+                console.log("Queue Data received",data);
                 setData(data || []);
                 setLoading(false);
             });
@@ -166,7 +164,7 @@ function QueuePage() {
                     ) : (
                         <div className="overflow-hidden">
                             {entries.map((entry, index) => (
-                                <div key={entry._id}
+                                <div key={index}
                                     className={`relative ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} transition-all duration-200 hover:bg-indigo-50 p-6 border-b border-gray-200`}>
                                     <div className="flex flex-col md:flex-row md:items-center justify-between">
                                         <div className="flex items-start space-x-4">

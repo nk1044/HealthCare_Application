@@ -2,9 +2,32 @@ import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
 import { User } from "../models/user.model.js";
 
-const getQueueData = async () => {
+const getQueueData = async (onlineUsers) => {
     const queue = await Queue.find();
-    return queue
+    if (!queue) {
+        queue
+    }
+    const queueData = queue.map((entry) => {
+        return {
+            tag: entry.tag,
+            Entries: entry.Entries.map((e) => {
+                return {
+                    user: e.user,
+                    doctorId: e.doctorId,
+                    description: e.description,
+                    roomID: e.roomID,
+                    chat: e.chat,
+                    status: onlineUsers[e.user] ? "online" : "offline",
+                    time: Date.now()
+                };
+            })
+        };
+    });
+    console.log(onlineUsers, "onlineUsers");
+
+    console.log(queueData[1], "queueData");
+
+    return queueData
 }
 
 const AddEntryToQueue = async (req, res) => {
@@ -51,11 +74,11 @@ const AddEntryToQueue = async (req, res) => {
 
 const RemoveEntryFromQueue = async (req, res) => {
     const { Queue_Id, userId } = req.body;
-    console.log(Queue_Id,userId,"hello");
-    
+    console.log(Queue_Id, userId, "hello");
+
     try {
         const queue = await Queue.findById(Queue_Id);
-        
+
         if (!queue) {
             return res.status(404).json({ message: "Queue entry does not exist" });
         }
@@ -94,7 +117,7 @@ const getQueueByUser = async (req, res) => {
             return res.status(200).json({ message: "User entry not found in queue" });
         }
 
-        res.status(200).json({ userEntry,queueId:queue._id });
+        res.status(200).json({ userEntry, queueId: queue._id });
     } catch (error) {
         res
             .status(500)

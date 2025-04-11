@@ -36,13 +36,15 @@ app.set("trust proxy", 1);
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('user-joined', (userId) => {
+    socket.on('user-joined',async (userId) => {
         if (!userId) {
             console.error('Invalid userId received:', userId);
             return;
         }
         userOnline.addUser(userId, socket.id);
         console.log("online users", userOnline.getOnlineUsers());
+        const queue = await getQueueData(userOnline.getOnlineUsers());
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
     socket.on('disconnect', () => {
@@ -52,9 +54,14 @@ io.on("connection", (socket) => {
         console.log("online users", userOnline.getOnlineUsers());
     });
 
-    socket.on('leave-chat-room',(roomId)=>{
+    socket.on('leave-chat-room', async (roomId)=>{
         socket.leave(roomId);
         console.log('User left room:', roomId);
+        userOnline.removeUserBySocketId(socket.id);
+        console.log("User Disconnected", socket.id);
+        console.log("online users", userOnline.getOnlineUsers());
+        const queue = await getQueueData(userOnline.getOnlineUsers());
+        io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     })
 
     socket.on('join-chat-room',async (roomId) => {
@@ -89,7 +96,7 @@ io.on("connection", (socket) => {
         
         console.log("User Joined Room");
         socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
-        const queue = await getQueueData();
+        const queue = await getQueueData(userOnline.getOnlineUsers());
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
