@@ -48,8 +48,13 @@ function QueuePage() {
 
     // Filter entries based on the selected tag
     const filterEntries = useCallback(() => {
+        if (!Array.isArray(data)) {
+            setAllEntries([]);
+            setOnlineEntries([]);
+            return;
+        }
         if (tag === 'All') {
-            const newAllEntries = data.flatMap(entry =>
+            const newAllEntries = data?.flatMap(entry =>
                 entry.Entries.map(e => ({
                     ...e,
                     tag: entry.tag,
@@ -57,7 +62,7 @@ function QueuePage() {
                 }))
             );
 
-            const newOnlineEntries = data.flatMap(entry =>
+            const newOnlineEntries = data?.flatMap(entry =>
                 entry.Entries
                     .filter(e => e.status === 'online')
                     .map(e => ({
