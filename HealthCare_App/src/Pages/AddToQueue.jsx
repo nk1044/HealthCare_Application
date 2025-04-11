@@ -1,19 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { AddEntryToQueue, DeleteQueueEntry, getDataByUser } from '../Server/Server.js';
+import { AddEntryToQueue, DeleteQueueEntry, getAllDoctor, getDataByUser } from '../Server/Server.js';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../Pages/Loading.jsx';
 import { useUser } from '../Store/zustand.js';
 import ChatBox from '../Components/ChatBox.jsx';
+import PopUp from '../Components/PopUp.jsx';
 
 function AddToQueue() {
   const [tags, setTags] = useState(["ENT", "General", "Dentist"]);
   const [tag, setTag] = useState("");
+  const [doctors, setDoctors] = useState([]);
+  const [doctor, setDoctor] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [queueData, setQueueData] = useState(null);
   const navigate = useNavigate();
   const user = useUser(useCallback(state => state.user, []));
   const [Queue_Id, setQueue_Id] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
 
   // Fetch user data
   useEffect(() => {
@@ -23,6 +27,8 @@ function AddToQueue() {
       try {
         setLoading(true);
         const userData = await getDataByUser(user._id);
+        const allDoctors = await getAllDoctor();
+        setDoctors(allDoctors);
         if (userData && userData.userEntry) {
           setQueueData(userData.userEntry);
           setQueue_Id(userData.queueId);
@@ -40,7 +46,7 @@ function AddToQueue() {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (tag === "" || description === "") {
+    if (tag === "" || description === "" || doctor === "") {
       alert("Please fill all the fields");
       return;
     }
@@ -49,7 +55,8 @@ function AddToQueue() {
     try {
       const res = await AddEntryToQueue({
         tag: tag,
-        description: description
+        description: description,
+        doctorId: doctor,
       });
       // console.log("Response:", res);
 
@@ -74,6 +81,7 @@ function AddToQueue() {
   const handleDelete = async () => {
     setLoading(true);
     try {
+      setModalOpen(false);
       await DeleteQueueEntry({ userId: user._id, Queue_Id });
       setQueueData(null);
     } catch (error) {
@@ -91,7 +99,6 @@ function AddToQueue() {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
-
   const renderQueueDetails = () => {
     return (
       <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
@@ -142,7 +149,7 @@ function AddToQueue() {
               Join Video Call
             </button>
             <button
-              onClick={handleDelete}
+               onClick={() => setModalOpen(true)}
               className="inline-flex items-center justify-center px-6 py-3 border border-red-300 text-red-700 bg-white rounded-lg text-lg font-medium shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -189,6 +196,33 @@ function AddToQueue() {
             {tag && (
               <p className="mt-2 text-sm text-gray-500">
                 You've selected the {tag} department.
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="tag">
+              Doctor
+            </label>
+            <div className="relative border rounded-lg">
+              <select
+                id="tag"
+                name="tag"
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3 pr-10 py-2 text-base focus:outline-none"
+                value={doctor}
+                onChange={(e) => setDoctor(e.target.value)}
+              >
+                <option value="" disabled>Select a doctor</option>
+                {doctors && doctors.map((doctor) => (
+                  <option key={doctor.name} value={doctor._id}>
+                    {doctor.name}
+                  </option>
+                ))}
+              </select>
+
+            </div>
+            {doctor && (
+              <p className="mt-2 text-sm text-gray-500">
+                You've selected {doctors.find((e)=>e._id==doctor)?.name}.
               </p>
             )}
           </div>
@@ -257,6 +291,13 @@ function AddToQueue() {
           {queueData ? renderQueueDetails() : renderForm()}
         </div>
       )}
+      <PopUp
+        isOpen={isModalOpen}
+        title="Are you sure?"
+        message="Do you really want to leave? This action cannot be undone."
+        onConfirm={handleDelete}
+        onCancel={() => setModalOpen(false)}
+      />
     </div>
   );
 }

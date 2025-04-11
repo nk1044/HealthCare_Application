@@ -98,8 +98,6 @@ io.on("connection", (socket) => {
         // Check room size and notify other users in the room
         const roomSize = io.sockets.adapter.rooms.get(roomId)?.size || 0;
         console.log(`Room ${roomId} now has ${roomSize} participants`);
-        
-        // Notify others in the room about this new connection
         socket.to(roomId).emit('user-connected', { userId });
     });
 

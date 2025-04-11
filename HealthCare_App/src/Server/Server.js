@@ -189,6 +189,20 @@ const DeleteQueueEntry = async (data) => {
   }
 };
 
+const getAllDoctor = async () =>{
+  try {
+    const response = await axios.get(
+      `${backend_url}/api/queue/get-all-doctors`, 
+      { withCredentials: true }
+    );
+    // console.log(response?.data);
+    return response?.data.doctors; 
+  } catch (error) {
+    console.log(error);
+    return null
+  }
+}
+
 // Export all functions
 export {
   GetHomePageData,
@@ -201,5 +215,6 @@ export {
   GetServicesPageData,
   AddEntryToQueue,
   getDataByUser,
-  DeleteQueueEntry
+  DeleteQueueEntry,
+  getAllDoctor
 };
