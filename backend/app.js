@@ -37,16 +37,19 @@ app.set("trust proxy", 1);
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('user-joined', async (userId) => {
+    socket.on('user-joined', async ({userId,role}) => {
+        // console.log("User joined", userId, role);
         if (!userId) {
             console.error('Invalid userId received:', userId);
             return;
         }
-
+        
         // Only update if socketId is different
-        const existingSocket = await userOnline.getSocketIdByUserId(userId);
-        if (existingSocket !== socket.id) {
-            await userOnline.addUser(userId, socket.id);
+        if(role=='Patient'){
+            const existingSocket = await userOnline.getSocketIdByUserId(userId);
+            if (existingSocket !== socket.id) {
+                await userOnline.addUser(userId, socket.id);
+            }
         }
         const onlineUsers = await userOnline.getOnlineUsers();
         console.log("online users", onlineUsers);
