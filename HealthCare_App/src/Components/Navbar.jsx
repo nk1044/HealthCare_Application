@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useUser } from '../Store/zustand.js';
 import { LogOut } from '../Server/Server.js';
 import Button from './Button.jsx';
@@ -10,6 +10,7 @@ function Navbar() {
     const user = useUser(useCallback(state => state.user, []));
     const setUser = useUser(useCallback(state => state.setUser, []));
     const navigate = useNavigate();
+    const dropdownRef = useRef(null);
 
     const toggleDropdown = () => {
         setDropdownOpen(!isDropdownOpen);
@@ -25,6 +26,25 @@ function Navbar() {
         await LogOut();
         navigate("/");
     };
+
+    // Handle click outside of dropdown to close it
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        }
+
+        // Add event listener when dropdown is open
+        if (isDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        
+        // Cleanup the event listener
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isDropdownOpen]);
 
     useEffect(() => {
         setDropdownOpen(false);
@@ -71,7 +91,7 @@ function Navbar() {
                     {/* User Profile or Login/Register */}
                     <div className="hidden md:flex items-center">
                         {user ? (
-                            <div className="relative ml-3">
+                            <div className="relative ml-3" ref={dropdownRef}>
                                 <button
                                     type="button"
                                     onClick={toggleDropdown}

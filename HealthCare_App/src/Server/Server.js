@@ -209,7 +209,7 @@ const getChatHistory = async (data) => {
       `${backend_url}/api/chat/getUserChats`, 
       { withCredentials: true }
     );
-    console.log(response?.data);
+    // console.log(response?.data);
     return response?.data?.chats;
   } catch (error) {
     console.log(error);

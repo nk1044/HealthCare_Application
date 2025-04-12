@@ -83,9 +83,10 @@ function Profile() {
                     <span className="text-gray-700">{user.role}</span>
                   </div>
                 </div>
-                <button className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition duration-200">
+                {/* TODO: will be using later */}
+                {/* <button className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition duration-200">
                   Edit Profile
-                </button>
+                </button> */}
               </div>
             </div>
 

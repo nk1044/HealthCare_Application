@@ -104,6 +104,7 @@ io.on("connection", (socket) => {
 
     // DND->OPD page one socket is also in queue controller
     socket.on("join-queue-room", async () => {
+        const roomId = process.env.ROOM_ID;
         socket.join(String(process.env.ROOM_ID));
         console.log("room id", String(process.env.ROOM_ID));
 
