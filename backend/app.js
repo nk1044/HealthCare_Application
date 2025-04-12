@@ -37,31 +37,39 @@ app.set("trust proxy", 1);
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('user-joined',async (userId) => {
+    socket.on('user-joined', async (userId) => {
         if (!userId) {
             console.error('Invalid userId received:', userId);
             return;
         }
-        userOnline.addUser(userId, socket.id);
-        console.log("online users", userOnline.getOnlineUsers());
-        const queue = await getQueueData(userOnline.getOnlineUsers());
+    
+        // Only update if socketId is different
+        const existingSocket = await userOnline.getSocketIdByUserId(userId);
+        if (existingSocket !== socket.id) {
+            await userOnline.addUser(userId, socket.id);
+        }
+        const onlineUsers = await userOnline.getOnlineUsers();
+        console.log("online users", onlineUsers);
+
+        const queue = await getQueueData(onlineUsers);
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
+    
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
         // Find and remove user from onlineUsers
-        userOnline.removeUserBySocketId(socket.id);
+        await userOnline.removeUserBySocketId(socket.id);
         console.log("User Disconnected", socket.id);
-        console.log("online users", userOnline.getOnlineUsers());
+        console.log("online users (disconected)", await userOnline.getOnlineUsers());
     });
 
     socket.on('leave-chat-room', async (roomId)=>{
         socket.leave(roomId);
         console.log('User left room:', roomId);
-        userOnline.removeUserBySocketId(socket.id);
+        await userOnline.removeUserBySocketId(socket.id);
         console.log("User Disconnected", socket.id);
-        console.log("online users", userOnline.getOnlineUsers());
-        const queue = await getQueueData(userOnline.getOnlineUsers());
+        console.log("online users",  await userOnline.getOnlineUsers());
+        const queue = await getQueueData( await userOnline.getOnlineUsers());
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     })
 
@@ -97,7 +105,7 @@ io.on("connection", (socket) => {
         
         console.log("User Joined Room");
         socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
-        const queue = await getQueueData(userOnline.getOnlineUsers());
+        const queue = await getQueueData(await userOnline.getOnlineUsers());
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
