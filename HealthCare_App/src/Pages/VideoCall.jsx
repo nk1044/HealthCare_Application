@@ -197,6 +197,17 @@ const VideoCall = () => {
             console.error("Error adding ICE candidate:", err);
           }
         });
+        socket.on("user-disconnected", ({ userId }) => {
+          console.log(`User ${userId} disconnected`);
+          
+          // Reset remote stream
+          setRemoteStream(null);
+          
+          // Clear the remote video element
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = null;
+          }
+        });
 
         setLoading(false);
       } catch (err) {
