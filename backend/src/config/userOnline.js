@@ -1,28 +1,55 @@
 // userManager.js
 import { redis } from './redis.js';
 
-const ONLINE_USERS_KEY = process.env.ONLINE_USERS_KEY
+const ONLINE_USERS_PREFIX = process.env.ONLINE_USERS_KEY || 'online_users';
 
 export const userOnline = {
     addUser: async (userId, socketId) => {
-        await redis.hset(ONLINE_USERS_KEY, userId, socketId);
+        const key = `${ONLINE_USERS_PREFIX}:${userId}`;
+        await redis.set(key, socketId);
     },
 
     removeUserBySocketId: async (socketId) => {
-        const users = await redis.hgetall(ONLINE_USERS_KEY);
-        for (const [userId, storedSocketId] of Object.entries(users)) {
+        // Get all keys with the prefix
+        const keys = await redis.keys(`${ONLINE_USERS_PREFIX}:*`);
+        
+        // Check each key to find the one with matching socketId
+        for (const key of keys) {
+            const storedSocketId = await redis.get(key);
             if (storedSocketId === socketId) {
-                await redis.hdel(ONLINE_USERS_KEY, userId);
+                await redis.del(key);
                 break;
             }
         }
     },
 
+    removeUser: async (userId) => {
+        const key = `${ONLINE_USERS_PREFIX}:${userId}`;
+        await redis.del(key);
+    },
+
     getOnlineUsers: async () => {
-        return await redis.hgetall(ONLINE_USERS_KEY); // returns { userId: socketId }
+        // Get all keys with the prefix
+        const keys = await redis.keys(`${ONLINE_USERS_PREFIX}:*`);
+        const result = {};
+        
+        // Build a map of userId to socketId
+        for (const key of keys) {
+            const userId = key.split(':')[1]; // Extract userId from the key
+            const socketId = await redis.get(key);
+            result[userId] = socketId;
+        }
+        
+        return result; // returns { userId: socketId }
     },
 
     getSocketIdByUserId: async (userId) => {
-        return await redis.hget(ONLINE_USERS_KEY, userId);
+        const key = `${ONLINE_USERS_PREFIX}:${userId}`;
+        return await redis.get(key);
+    },
+    
+    isUserOnline: async (userId) => {
+        const key = `${ONLINE_USERS_PREFIX}:${userId}`;
+        return Boolean(await redis.get(key));
     }
 };
