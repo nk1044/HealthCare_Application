@@ -135,6 +135,7 @@ function Login() {
                         alt="IITJ"
                         src="/iitjlogo1.png"
                         className="w-48 h-auto mb-6"
+                        onClick={() => navigate('/')}
                     />
                     <h1 className="text-3xl font-bold text-white text-center px-8">Welcome to Indian Institute of Technology Jodhpur</h1>
                     <p className="text-indigo-200 mt-4 text-center max-w-md px-8">Access your academic portal, course materials, and campus resources</p>

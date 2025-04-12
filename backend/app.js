@@ -10,7 +10,7 @@ import { userOnline } from './src/config/userOnline.js';
 
 import { Server } from "socket.io";
 import http from 'http';
-import { getChatMessages, getQueueData ,addChatMessage} from './src/controllers/queue.controller.js';
+import { getChatMessages, getQueueData, addChatMessage } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
 
 
@@ -37,16 +37,19 @@ app.set("trust proxy", 1);
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('user-joined', async (userId) => {
+    socket.on('user-joined', async ({userId,role}) => {
+        // console.log("User joined", userId, role);
         if (!userId) {
             console.error('Invalid userId received:', userId);
             return;
         }
-    
+        
         // Only update if socketId is different
-        const existingSocket = await userOnline.getSocketIdByUserId(userId);
-        if (existingSocket !== socket.id) {
-            await userOnline.addUser(userId, socket.id);
+        if(role=='Patient'){
+            const existingSocket = await userOnline.getSocketIdByUserId(userId);
+            if (existingSocket !== socket.id) {
+                await userOnline.addUser(userId, socket.id);
+            }
         }
         const onlineUsers = await userOnline.getOnlineUsers();
         console.log("online users", onlineUsers);
@@ -54,34 +57,35 @@ io.on("connection", (socket) => {
         const queue = await getQueueData(onlineUsers);
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
-    
+
 
     socket.on('disconnect', async () => {
         // Find and remove user from onlineUsers
         await userOnline.removeUserBySocketId(socket.id);
         console.log("User Disconnected", socket.id);
         console.log("online users (disconected)", await userOnline.getOnlineUsers());
+
     });
 
-    socket.on('leave-chat-room', async (roomId)=>{
+    socket.on('leave-chat-room', async (roomId) => {
         socket.leave(roomId);
         console.log('User left room:', roomId);
         await userOnline.removeUserBySocketId(socket.id);
         console.log("User Disconnected", socket.id);
-        console.log("online users",  await userOnline.getOnlineUsers());
-        const queue = await getQueueData( await userOnline.getOnlineUsers());
+        console.log("online users", await userOnline.getOnlineUsers());
+        const queue = await getQueueData(await userOnline.getOnlineUsers());
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     })
 
-    socket.on('join-chat-room',async (roomId) => {
-        if(!roomId){
+    socket.on('join-chat-room', async (roomId) => {
+        if (!roomId) {
             console.error('Invalid data received for joining room:', roomId);
             return;
         }
         socket.join(String(roomId));
         console.log("room id for chat room", String(roomId));
         const chat = await getChatMessages(roomId);
-        io.to(String(roomId)).emit('chat-history', chat );
+        io.to(String(roomId)).emit('chat-history', chat);
     });
 
     socket.on("send-chat-message", async (data) => {
@@ -93,19 +97,16 @@ io.on("connection", (socket) => {
         await addChatMessage(roomId, newChat);
         console.log("message", newChat);
         const chat = await getChatMessages(roomId);
-        io.to(String(roomId)).emit('chat-history', chat );
+        io.to(String(roomId)).emit('chat-history', chat);
     }
     );
 
-    
-    // DND->OPD page one socket is also in queue controller
-    socket.on("join-queue-room", async (doctorId) => {
-        // const roomId = doctorId ?? String(process.env.ROOM_ID);
-        const roomId = String(process.env.ROOM_ID);
 
-        socket.join(String(roomId));
-        console.log("room id", String(roomId));
-        
+    // DND->OPD page one socket is also in queue controller
+    socket.on("join-queue-room", async () => {
+        socket.join(String(process.env.ROOM_ID));
+        console.log("room id", String(process.env.ROOM_ID));
+
         console.log("User Joined Room");
         socket.to(String(roomId)).emit('doctor-connected', 'A new doctor connected');
         const queue = await getQueueData(await userOnline.getOnlineUsers());
@@ -123,14 +124,19 @@ io.on("connection", (socket) => {
         }
 
         console.log(`User ${userId} joined room: ${roomId}`);
-        
+
         // Join the room
         socket.join(roomId);
-        
+
         // Check room size and notify other users in the room
         const roomSize = io.sockets.adapter.rooms.get(roomId)?.size || 0;
         console.log(`Room ${roomId} now has ${roomSize} participants`);
         socket.to(roomId).emit('user-connected', { userId });
+    });
+
+    socket.on("leave-room", ({ roomId, userId }) => {
+        socket.to(roomId).emit("user-disconnected", { userId });
+        socket.leave(roomId);
     });
 
     // DND

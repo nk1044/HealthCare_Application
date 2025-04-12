@@ -33,7 +33,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
     useEffect(() => {
         setSocketConnected(false);
         socket.emit("leave-chat-room", roomId);
-        socket.emit("user-joined", user._id)
+        socket.emit("user-joined",{ userId:user._id,role})
         socket.emit("join-chat-room", roomId);
         setSocketConnected(true);
 
