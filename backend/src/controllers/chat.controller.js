@@ -51,7 +51,8 @@ const addMessage = async (data) => {
             message,
             timestamp: Date.now()
         });
-
+        console.log("chatId:", chatId);
+        
         await chat.save();
         return { message: "Message added successfully", chat }; 
     } catch (error) {

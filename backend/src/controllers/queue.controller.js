@@ -160,20 +160,22 @@ const getChatMessages = async (roomID) => {
 };
 
 
-const addChatMessage = async (roomID, message, chatId='') => {
+const addChatMessage = async (roomID, message) => {
     try {
         const numericRoomID = Number(roomID);
-        addMessage({ chatId: chatId, sender: message.sender, message: message.message });
-
-        // Find the queue entry that contains this roomID
         const queue = await Queue.findOne({ "Entries.roomID": numericRoomID });
-
+        
+        
+        // Find the queue entry that contains this roomID
+        
         if (!queue) {
             return { message: "Queue entry does not exist" };
         }
-
+        
         // Find the specific entry inside the queue
         let entry = queue.Entries.find(e => e.roomID === numericRoomID);
+        
+        addMessage({ chatId:entry?.chatId, sender: message.sender, message: message.message });
         if (!entry) {
             return { message: "No matching room found" };
         }

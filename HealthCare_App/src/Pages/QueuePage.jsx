@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 import { DeleteQueueEntry } from '../Server/Server';
 import ChatBox from '../Components/ChatBox';
 import PopUp from '../Components/PopUp.jsx';
+import { useUser } from '../Store/zustand.js';
 
 const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
@@ -21,10 +22,15 @@ function QueuePage() {
     const [allEntries, setAllEntries] = useState([]);
     const [onlineEntries, setOnlineEntries] = useState([]);
     const [whichQueue, setWhichQueue] = useState("All");
+    const user = useUser(useCallback(state => state.user, []));
 
     useEffect(() => {
         try {
-            socket.emit("join-queue-room");
+            console.log("user", user?._id);
+            const doctorId = user?._id;
+
+
+            socket.emit("join-queue-room", doctorId);
 
             socket.on("queue-data", (data) => {
                 console.log("Queue Data received", data);

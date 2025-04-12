@@ -203,6 +203,21 @@ const getAllDoctor = async () =>{
   }
 }
 
+const getChatHistory = async (data) => {
+  try {
+    const response = await axios.get(
+      `${backend_url}/api/chat/getUserChats`, 
+      { withCredentials: true }
+    );
+    console.log(response?.data);
+    return response?.data?.chats;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+
 // Export all functions
 export {
   GetHomePageData,
@@ -216,5 +231,6 @@ export {
   AddEntryToQueue,
   getDataByUser,
   DeleteQueueEntry,
-  getAllDoctor
+  getAllDoctor,
+  getChatHistory
 };

@@ -99,14 +99,17 @@ io.on("connection", (socket) => {
 
     
     // DND->OPD page one socket is also in queue controller
-    socket.on("join-queue-room", async () => {
-        socket.join(String(process.env.ROOM_ID));
-        console.log("room id", String(process.env.ROOM_ID));
+    socket.on("join-queue-room", async (doctorId) => {
+        // const roomId = doctorId ?? String(process.env.ROOM_ID);
+        const roomId = String(process.env.ROOM_ID);
+
+        socket.join(String(roomId));
+        console.log("room id", String(roomId));
         
         console.log("User Joined Room");
-        socket.to(String(process.env.ROOM_ID)).emit('doctor-connected', 'A new doctor connected');
+        socket.to(String(roomId)).emit('doctor-connected', 'A new doctor connected');
         const queue = await getQueueData(await userOnline.getOnlineUsers());
-        io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
+        io.to(String(roomId)).emit('queue-data', queue);
     });
 
     //DND->BELOW function are for video call 👇
