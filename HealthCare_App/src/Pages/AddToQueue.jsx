@@ -116,7 +116,7 @@ function AddToQueue() {
           <p className="text-blue-100 mt-2">You're currently in the queue. A healthcare professional will connect with you shortly.</p>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-1 sm:p-4 md:p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <p className="text-sm font-medium text-gray-500 mb-1">Description</p>
@@ -280,7 +280,7 @@ function AddToQueue() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-10 px-2 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto mb-8">
         <h1 className="text-3xl font-extrabold text-gray-900 text-center">Virtual Consultation</h1>
         <p className="mt-2 text-lg text-gray-600 text-center">Connect with healthcare professionals from the comfort of your home</p>

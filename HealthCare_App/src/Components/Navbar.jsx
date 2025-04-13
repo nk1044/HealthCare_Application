@@ -117,9 +117,9 @@ function Navbar() {
                                         <div onClick={() => navigate('/user/profile')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
                                             Profile
                                         </div>
-                                        <div onClick={() => navigate('/user/settings')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
+                                        {/* <div onClick={() => navigate('/user/settings')} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
                                             Settings
-                                        </div>
+                                        </div> */}
                                         <div onClick={handleLogout} className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 cursor-pointer">
                                             Sign out
                                         </div>

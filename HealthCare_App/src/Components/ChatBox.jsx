@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useUser } from "../Store/zustand";
 import { uploadMediaToCloudinary } from "../Server/Cloudinary";
+import { SendHorizontal, Image, Mic, X, Loader } from 'lucide-react';
 
 const socket = io(String(import.meta.env.VITE_BACKEND_URI));
 
@@ -26,6 +27,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
     const chatContainerRef = useRef(null);
     const [socketConnected, setSocketConnected] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isAudioUploading, setIsAudioUploading] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
     const [isRecording, setIsRecording] = useState(false);
 
@@ -94,7 +96,9 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
 
     const handleVoiceRecording = async () => {
         if (isRecording) {
-            mediaRecorder.stop();
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
             setIsRecording(false);
             return;
         }
@@ -112,8 +116,11 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
             };
 
             recorder.onstop = async () => {
+                // Stop all audio tracks to turn off the microphone
+                stream.getTracks().forEach(track => track.stop());
+
                 const audioBlob = new Blob(chunks, { type: "audio/webm" });
-                setIsUploading(true);
+                setIsAudioUploading(true);
 
                 try {
                     const audioUrl = await uploadMediaToCloudinary(audioBlob, "voice"); // optional 'folder'
@@ -133,7 +140,8 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                 } catch (error) {
                     console.error("Voice upload failed:", error);
                 } finally {
-                    setIsUploading(false);
+                    setIsAudioUploading(false);
+                    setMediaRecorder(null);
                 }
             };
 
@@ -141,6 +149,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
         } catch (error) {
             console.error("Mic access denied or error occurred:", error);
             alert("Could not start recording. Please allow microphone access.");
+            setIsRecording(false);
         }
     };
 
@@ -211,7 +220,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
 
 
     return (
-        <div className="bg-white border rounded-lg shadow-md overflow-hidden pb-2 ">
+        <div className="bg-white border rounded-lg shadow-md overflow-hidden pb-2 mx-2 lg:mx-0">
             <div className="bg-blue-600 text-white px-4 py-2 flex items-center justify-between shadow-md">
                 <div className="flex items-center space-x-2">
                     <span className={`h-3 w-3 rounded-full ${socketConnected ? "bg-green-400" : "bg-red-400"}`} />
@@ -250,15 +259,25 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                     </div>
                 ) : (
                     chat.map((message, index) => (
-                        <div key={index} className={`flex w-full ${message.sender !== role ? "justify-start" : "justify-end"}`}>
+                        <div
+                            key={index}
+                            className={`flex w-full ${message.sender !== role ? "justify-start" : "justify-end"} mb-3`}
+                        >
                             <div
-                                className={`relative max-w-[75%] px-4 py-2 rounded-lg shadow-sm ${message.sender !== role ? "bg-white border border-gray-200 text-gray-800" : "bg-blue-600 text-white"
+                                className={`relative max-w-[75%] px-2 py-1 rounded-lg shadow-sm 
+                                    ${message.sender !== role
+                                        ? "bg-white border border-gray-200 text-gray-800 rounded-tl-none"
+                                        : "bg-blue-600 text-white rounded-tr-none"
                                     }`}
                             >
-                                {renderMessage(message)}
-                                <span className={`absolute bottom-0 ${message.sender === role ? "right-1" : "left-1"} text-xs opacity-70`}>
+                                <div className="mb-0">
+                                    {renderMessage(message)}
+                                </div>
+                                <div
+                                    className={`text-xs pt-1 ${message.sender === role ? "text-blue-200 text-right" : "text-gray-500 text-left"}`}
+                                >
                                     {formatTime(message.timestamp)}
-                                </span>
+                                </div>
                             </div>
                         </div>
                     ))
@@ -266,66 +285,74 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
             </div>
 
             <div className="p-3 border-t bg-white">
-                <div className="flex items-center space-x-2">
-                    <input
-                        ref={userMessage}
-                        onKeyDown={handleKeyDown}
-                        placeholder={socketConnected ? "Type your message..." : "Reconnecting..."}
-                        disabled={!socketConnected || isUploading}
-                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                    />
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileSelect}
-                        accept="image/*"
-                        className="hidden"
-                    />
-                    <button
-                        onClick={() => fileInputRef.current.click()}
-                        disabled={isUploading || !socketConnected}
-                        className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-                    >
-                        {isUploading ? (
-                            <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                            </svg>
-                        )}
-                    </button>
-                    <button
-                        onClick={handleVoiceRecording}
-                        disabled={isUploading || !socketConnected}
-                        className={`p-2 rounded-lg ${isRecording ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200"} transition-colors`}
-                    >
-                        {isRecording ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 2a2 2 0 00-2 2v6a2 2 0 104 0V4a2 2 0 00-2-2zM5 10a5 5 0 0010 0h-1a4 4 0 01-8 0H5z" />
-                                <path d="M4 10a6 6 0 0012 0h-1a5 5 0 01-10 0H4z" />
-                            </svg>
-                        )}
-                    </button>
+                <div className="flex flex-col space-y-2 w-full">
+                    {/* Input field - full width */}
+                    <div className="flex w-full">
+                        <input
+                            ref={userMessage}
+                            onKeyDown={handleKeyDown}
+                            placeholder={socketConnected ? "Type your message..." : "Reconnecting..."}
+                            disabled={!socketConnected || isUploading || isAudioUploading}
+                            className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                        />
+                    </div>
 
-                    <button
-                        onClick={handleSendMessage}
-                        disabled={!socketConnected || isUploading}
-                        className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm"
-                    >
-                        Send
-                    </button>
+                    {/* Action buttons row */}
+                    <div className="flex justify-between w-full">
+                        {/* Left side buttons */}
+                        <div className="flex space-x-2">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileSelect}
+                                accept="image/*"
+                                className="hidden"
+                            />
+
+                            <button
+                                onClick={() => fileInputRef.current.click()}
+                                disabled={isUploading || isAudioUploading || !socketConnected}
+                                className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                                aria-label="Upload image"
+                            >
+                                {isUploading ? (
+                                    <Loader className="h-5 w-5 text-gray-600 animate-spin" />
+                                ) : (
+                                    <Image className="h-5 w-5 text-gray-600" />
+                                )}
+                            </button>
+
+                            <button
+                                onClick={handleVoiceRecording}
+                                disabled={isUploading || isAudioUploading || !socketConnected}
+                                className={`p-2 rounded-lg ${isRecording ? "bg-red-500 text-white" : "bg-gray-100 hover:bg-gray-200"} transition-colors`}
+                                aria-label={isRecording ? "Stop recording" : "Start voice recording"}
+                            >
+                                {isRecording ? (
+                                    <X className="h-5 w-5" />
+                                ) : isAudioUploading ? (
+                                    <Loader className="h-5 w-5 text-gray-600 animate-spin" />
+                                ) : (
+                                    <Mic className="h-5 w-5 text-gray-600" />
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Right side - Send button */}
+                        <button
+                            onClick={handleSendMessage}
+                            disabled={!socketConnected || isUploading || isAudioUploading}
+                            className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Send message"
+                        >
+                            <SendHorizontal className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {patientData && (
-                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:-mt-4">
                     <button
                         onClick={() => navigate(`/video-call?roomID=${patientData?.roomID}`)}
                         className="px-6 py-3 bg-indigo-600 text-white rounded-lg text-lg font-medium shadow-sm hover:bg-indigo-700 transition-colors"

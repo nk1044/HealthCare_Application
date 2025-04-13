@@ -301,7 +301,7 @@ function QueuePage() {
                                                     }
                                                     setModalOpen(false);
                                                     console.log({ Queue_Id: entry, userId: entry?.user });
-                                                    
+
                                                 }}
                                                 onCancel={() => setModalOpen(false)}
                                             />
@@ -315,7 +315,7 @@ function QueuePage() {
             </div>
 
             {showChatBox && (
-                <div className='fixed bottom-6 left-6 z-50 w-1/2 h-fit bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden transition-all duration-300 ease-in-out animate-slide-up'>
+                <div className='fixed bottom-6 md:left-6 z-50 w-full md:w-7/12  h-fit bg-white border border-gray-200 shadow-2xl rounded-lg overflow-hidden transition-all duration-300 ease-in-out animate-slide-up lg:w-6/12'>
                     <ChatBox
                         roomId={roomIdForChat}
                         setShowChatBox={setShowChatBox}
