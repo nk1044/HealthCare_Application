@@ -2,13 +2,16 @@ import { io } from "../../app.js";
 import { Queue } from "../models/queue.model.js";
 import { User } from "../models/user.model.js";
 import { createChat, addMessage } from "./chat.controller.js";
+import { userOnline } from "../config/userOnline.js";
 
-const getQueueData = async (onlineUsers = {}) => {
+const getQueueData = async () => {
     const queue = await Queue.find();
     if (!queue) {
         return []; // or handle this case appropriately
     }
-
+    const onlineUsers = await userOnline.getOnlineUsers();
+    console.log("online users", onlineUsers);
+    
     const queueData = queue.map((entry) => {
         return {
             _id: entry._id,
@@ -101,6 +104,7 @@ const RemoveEntryFromQueue = async (req, res) => {
 
         await queue.save({ validateBeforeSave: false });
         const queueData = await getQueueData();
+
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queueData);
         return res.status(200).json({ message: "Entry removed successfully", queue });
 

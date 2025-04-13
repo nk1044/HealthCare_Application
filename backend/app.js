@@ -51,10 +51,7 @@ io.on("connection", (socket) => {
                 await userOnline.addUser(userId, socket.id);
             }
         }
-        const onlineUsers = await userOnline.getOnlineUsers();
-        console.log("online users", onlineUsers);
-
-        const queue = await getQueueData(onlineUsers);
+        const queue = await getQueueData();
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     });
 
@@ -72,8 +69,7 @@ io.on("connection", (socket) => {
         console.log('User left room:', roomId);
         await userOnline.removeUserBySocketId(socket.id);
         console.log("User Disconnected", socket.id);
-        console.log("online users", await userOnline.getOnlineUsers());
-        const queue = await getQueueData(await userOnline.getOnlineUsers());
+        const queue = await getQueueData();
         io.to(String(process.env.ROOM_ID)).emit('queue-data', queue);
     })
 
@@ -110,7 +106,7 @@ io.on("connection", (socket) => {
 
         console.log("User Joined Room");
         socket.to(String(roomId)).emit('doctor-connected', 'A new doctor connected');
-        const queue = await getQueueData(await userOnline.getOnlineUsers());
+        const queue = await getQueueData();
         io.to(String(roomId)).emit('queue-data', queue);
     });
 
