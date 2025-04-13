@@ -24,7 +24,7 @@ function AddToQueue() {
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user || !user._id) return;
-      
+
       try {
         setLoading(true);
         const userData = await getDataByUser(user._id);
@@ -140,7 +140,7 @@ function AddToQueue() {
           </div>
 
           {/* Improved Chat Component */}
-          <ChatBox roomId={queueData.roomID}/>
+          <ChatBox roomId={queueData.roomID} />
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <button
@@ -153,7 +153,7 @@ function AddToQueue() {
               Join Video Call
             </button>
             <button
-               onClick={() => setModalOpen(true)}
+              onClick={() => setModalOpen(true)}
               className="inline-flex items-center justify-center px-6 py-3 border border-red-300 text-red-700 bg-white rounded-lg text-lg font-medium shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -226,7 +226,7 @@ function AddToQueue() {
             </div>
             {doctor && (
               <p className="mt-2 text-sm text-gray-500">
-                You've selected {doctors.find((e)=>e._id==doctor)?.name}.
+                You've selected {doctors.find((e) => e._id == doctor)?.name}.
               </p>
             )}
           </div>
