@@ -1,0 +1,602 @@
+{
+  "system": {
+    "total_files": 70,
+    "total_loc": 5109,
+    "total_kloc": 5.109,
+    "category": "organic",
+    "effort_pm": 13.303439518668434,
+    "time_months": 6.6841518206605075,
+    "cost_usd": 106427.51614934747
+  },
+  "components": [
+    {
+      "component": "root",
+      "files": 4,
+      "loc": 405,
+      "kloc": 0.405,
+      "effort_pm": 0.929049846881327,
+      "time_months": 2.431055282045734,
+      "cost_usd": 7432.398775050616
+    },
+    {
+      "component": "backend",
+      "files": 26,
+      "loc": 948,
+      "kloc": 0.948,
+      "effort_pm": 2.2691332304988334,
+      "time_months": 3.4132398475480255,
+      "cost_usd": 18153.065843990666
+    },
+    {
+      "component": "HealthCare_App",
+      "files": 40,
+      "loc": 3756,
+      "kloc": 3.756,
+      "effort_pm": 9.63103817917502,
+      "time_months": 5.912018554248714,
+      "cost_usd": 77048.30543340016
+    }
+  ],
+  "units": [
+    {
+      "file": "cocomo_cal.py",
+      "loc": 220,
+      "kloc": 0.22,
+      "effort_pm": 0.4895026604907396,
+      "time_months": 1.9056666345288031,
+      "cost_usd": 3916.0212839259166
+    },
+    {
+      "file": "evaluate.py",
+      "loc": 118,
+      "kloc": 0.118,
+      "effort_pm": 0.2544997437448841,
+      "time_months": 1.4862819426702796,
+      "cost_usd": 2035.9979499590727
+    },
+    {
+      "file": "run_cocomo.py",
+      "loc": 28,
+      "kloc": 0.028,
+      "effort_pm": 0.05619881712547658,
+      "time_months": 0.837213716566903,
+      "cost_usd": 449.59053700381264
+    },
+    {
+      "file": "test.py",
+      "loc": 39,
+      "kloc": 0.039,
+      "effort_pm": 0.07958460756407786,
+      "time_months": 0.9555536125664593,
+      "cost_usd": 636.6768605126229
+    },
+    {
+      "file": "backend\\app.js",
+      "loc": 139,
+      "kloc": 0.139,
+      "effort_pm": 0.3022572884528291,
+      "time_months": 1.5866574886178022,
+      "cost_usd": 2418.058307622633
+    },
+    {
+      "file": "backend\\index.js",
+      "loc": 28,
+      "kloc": 0.028,
+      "effort_pm": 0.05619881712547658,
+      "time_months": 0.837213716566903,
+      "cost_usd": 449.59053700381264
+    },
+    {
+      "file": "backend\\.adminjs\\bundle.js",
+      "loc": 4,
+      "kloc": 0.004,
+      "effort_pm": 0.00728407204432665,
+      "time_months": 0.3851609214777815,
+      "cost_usd": 58.2725763546132
+    },
+    {
+      "file": "backend\\.adminjs\\entry.js",
+      "loc": 1,
+      "kloc": 0.001,
+      "effort_pm": 0.0016990698825219304,
+      "time_months": 0.22152374280567055,
+      "cost_usd": 13.592559060175443
+    },
+    {
+      "file": "backend\\src\\config\\admin.js",
+      "loc": 0,
+      "kloc": 0.0,
+      "effort_pm": 0.0,
+      "time_months": 0.0,
+      "cost_usd": 0.0
+    },
+    {
+      "file": "backend\\src\\config\\db.js",
+      "loc": 10,
+      "kloc": 0.01,
+      "effort_pm": 0.019063877633382752,
+      "time_months": 0.5551627016115971,
+      "cost_usd": 152.51102106706202
+    },
+    {
+      "file": "backend\\src\\config\\google.js",
+      "loc": 10,
+      "kloc": 0.01,
+      "effort_pm": 0.019063877633382752,
+      "time_months": 0.5551627016115971,
+      "cost_usd": 152.51102106706202
+    },
+    {
+      "file": "backend\\src\\config\\redis.js",
+      "loc": 2,
+      "kloc": 0.002,
+      "effort_pm": 0.003517974905060489,
+      "time_months": 0.2920997927220064,
+      "cost_usd": 28.14379924048391
+    },
+    {
+      "file": "backend\\src\\config\\userOnline.js",
+      "loc": 40,
+      "kloc": 0.04,
+      "effort_pm": 0.0817286325619953,
+      "time_months": 0.9652553492218436,
+      "cost_usd": 653.8290604959625
+    },
+    {
+      "file": "backend\\src\\controllers\\about.controller.js",
+      "loc": 9,
+      "kloc": 0.009,
+      "effort_pm": 0.01706734143167211,
+      "time_months": 0.5323080595702505,
+      "cost_usd": 136.5387314533769
+    },
+    {
+      "file": "backend\\src\\controllers\\auth.controller.js",
+      "loc": 109,
+      "kloc": 0.109,
+      "effort_pm": 0.23415803478807717,
+      "time_months": 1.4399700298457307,
+      "cost_usd": 1873.2642783046174
+    },
+    {
+      "file": "backend\\src\\controllers\\chat.controller.js",
+      "loc": 75,
+      "kloc": 0.075,
+      "effort_pm": 0.15813411350226855,
+      "time_months": 1.2404227551130214,
+      "cost_usd": 1265.0729080181484
+    },
+    {
+      "file": "backend\\src\\controllers\\dashboard.controller.js",
+      "loc": 18,
+      "kloc": 0.018,
+      "effort_pm": 0.03533843985486963,
+      "time_months": 0.7018980082921545,
+      "cost_usd": 282.70751883895707
+    },
+    {
+      "file": "backend\\src\\controllers\\queue.controller.js",
+      "loc": 177,
+      "kloc": 0.177,
+      "effort_pm": 0.38956790640078853,
+      "time_months": 1.7472764110655858,
+      "cost_usd": 3116.5432512063085
+    },
+    {
+      "file": "backend\\src\\controllers\\service.controller.js",
+      "loc": 9,
+      "kloc": 0.009,
+      "effort_pm": 0.01706734143167211,
+      "time_months": 0.5323080595702505,
+      "cost_usd": 136.5387314533769
+    },
+    {
+      "file": "backend\\src\\middlewares\\auth.middleware.js",
+      "loc": 45,
+      "kloc": 0.045,
+      "effort_pm": 0.09248778554745439,
+      "time_months": 1.0117007536595328,
+      "cost_usd": 739.9022843796351
+    },
+    {
+      "file": "backend\\src\\models\\About.model.js",
+      "loc": 19,
+      "kloc": 0.019,
+      "effort_pm": 0.037402662866672265,
+      "time_months": 0.7172044363929797,
+      "cost_usd": 299.2213029333781
+    },
+    {
+      "file": "backend\\src\\models\\Chat.model.js",
+      "loc": 30,
+      "kloc": 0.03,
+      "effort_pm": 0.06042109048157283,
+      "time_months": 0.8605808171089848,
+      "cost_usd": 483.3687238525826
+    },
+    {
+      "file": "backend\\src\\models\\DashBoard.model.js",
+      "loc": 45,
+      "kloc": 0.045,
+      "effort_pm": 0.09248778554745439,
+      "time_months": 1.0117007536595328,
+      "cost_usd": 739.9022843796351
+    },
+    {
+      "file": "backend\\src\\models\\queue.model.js",
+      "loc": 50,
+      "kloc": 0.05,
+      "effort_pm": 0.10330699911980817,
+      "time_months": 1.0551381169722664,
+      "cost_usd": 826.4559929584653
+    },
+    {
+      "file": "backend\\src\\models\\Service.model.js",
+      "loc": 19,
+      "kloc": 0.019,
+      "effort_pm": 0.037402662866672265,
+      "time_months": 0.7172044363929797,
+      "cost_usd": 299.2213029333781
+    },
+    {
+      "file": "backend\\src\\models\\user.model.js",
+      "loc": 69,
+      "kloc": 0.069,
+      "effort_pm": 0.1448781150737328,
+      "time_months": 1.1998337326738802,
+      "cost_usd": 1159.0249205898624
+    },
+    {
+      "file": "backend\\src\\routes\\auth.route.js",
+      "loc": 10,
+      "kloc": 0.01,
+      "effort_pm": 0.019063877633382752,
+      "time_months": 0.5551627016115971,
+      "cost_usd": 152.51102106706202
+    },
+    {
+      "file": "backend\\src\\routes\\chat.route.js",
+      "loc": 7,
+      "kloc": 0.007,
+      "effort_pm": 0.013108837615853344,
+      "time_months": 0.4815200755844199,
+      "cost_usd": 104.87070092682676
+    },
+    {
+      "file": "backend\\src\\routes\\queue.route.js",
+      "loc": 14,
+      "kloc": 0.014,
+      "effort_pm": 0.027142239552050793,
+      "time_months": 0.6349292969154976,
+      "cost_usd": 217.13791641640634
+    },
+    {
+      "file": "backend\\src\\routes\\web.route.js",
+      "loc": 9,
+      "kloc": 0.009,
+      "effort_pm": 0.01706734143167211,
+      "time_months": 0.5323080595702505,
+      "cost_usd": 136.5387314533769
+    },
+    {
+      "file": "HealthCare_App\\eslint.config.js",
+      "loc": 37,
+      "kloc": 0.037,
+      "effort_pm": 0.07530486806706714,
+      "time_months": 0.935691681289773,
+      "cost_usd": 602.4389445365372
+    },
+    {
+      "file": "HealthCare_App\\index.html",
+      "loc": 13,
+      "kloc": 0.013,
+      "effort_pm": 0.025110291919757374,
+      "time_months": 0.6164298744994398,
+      "cost_usd": 200.88233535805898
+    },
+    {
+      "file": "HealthCare_App\\postcss.config.js",
+      "loc": 6,
+      "kloc": 0.006,
+      "effort_pm": 0.011149876438482214,
+      "time_months": 0.45279604982169125,
+      "cost_usd": 89.1990115078577
+    },
+    {
+      "file": "HealthCare_App\\tailwind.config.js",
+      "loc": 10,
+      "kloc": 0.01,
+      "effort_pm": 0.019063877633382752,
+      "time_months": 0.5551627016115971,
+      "cost_usd": 152.51102106706202
+    },
+    {
+      "file": "HealthCare_App\\vite.config.js",
+      "loc": 5,
+      "kloc": 0.005,
+      "effort_pm": 0.009207245988131104,
+      "time_months": 0.42102638410343296,
+      "cost_usd": 73.65796790504884
+    },
+    {
+      "file": "HealthCare_App\\src\\App.css",
+      "loc": 0,
+      "kloc": 0.0,
+      "effort_pm": 0.0,
+      "time_months": 0.0,
+      "cost_usd": 0.0
+    },
+    {
+      "file": "HealthCare_App\\src\\App.jsx",
+      "loc": 50,
+      "kloc": 0.05,
+      "effort_pm": 0.10330699911980817,
+      "time_months": 1.0551381169722664,
+      "cost_usd": 826.4559929584653
+    },
+    {
+      "file": "HealthCare_App\\src\\index.css",
+      "loc": 16,
+      "kloc": 0.016,
+      "effort_pm": 0.031227500465247155,
+      "time_months": 0.6696751036919388,
+      "cost_usd": 249.82000372197723
+    },
+    {
+      "file": "HealthCare_App\\src\\main.jsx",
+      "loc": 9,
+      "kloc": 0.009,
+      "effort_pm": 0.01706734143167211,
+      "time_months": 0.5323080595702505,
+      "cost_usd": 136.5387314533769
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\Auth.jsx",
+      "loc": 48,
+      "kloc": 0.048,
+      "effort_pm": 0.09897250010774732,
+      "time_months": 1.0380912591205569,
+      "cost_usd": 791.7800008619786
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\Button.jsx",
+      "loc": 30,
+      "kloc": 0.03,
+      "effort_pm": 0.06042109048157283,
+      "time_months": 0.8605808171089848,
+      "cost_usd": 483.3687238525826
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\ChatBox.jsx",
+      "loc": 288,
+      "kloc": 0.288,
+      "effort_pm": 0.6494913236712065,
+      "time_months": 2.1218656543581194,
+      "cost_usd": 5195.930589369653
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\ChatDetailView.jsx",
+      "loc": 136,
+      "kloc": 0.136,
+      "effort_pm": 0.29541129434169955,
+      "time_months": 1.5729043190304501,
+      "cost_usd": 2363.2903547335964
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\Footer.jsx",
+      "loc": 141,
+      "kloc": 0.141,
+      "effort_pm": 0.30682540065796077,
+      "time_months": 1.5957274152892589,
+      "cost_usd": 2454.603205263686
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\MedCard.jsx",
+      "loc": 25,
+      "kloc": 0.025,
+      "effort_pm": 0.04989399174101487,
+      "time_months": 0.8001996258555177,
+      "cost_usd": 399.151933928119
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\Navbar.jsx",
+      "loc": 235,
+      "kloc": 0.235,
+      "effort_pm": 0.5246050864536072,
+      "time_months": 1.9564842565577463,
+      "cost_usd": 4196.840691628857
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\PlaceholderPage.jsx",
+      "loc": 32,
+      "kloc": 0.032,
+      "effort_pm": 0.06465747178182137,
+      "time_months": 0.8830293155127038,
+      "cost_usd": 517.259774254571
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\PopUp.jsx",
+      "loc": 27,
+      "kloc": 0.027,
+      "effort_pm": 0.054093264799243965,
+      "time_months": 0.8251528849630035,
+      "cost_usd": 432.7461183939517
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\SecondCard.jsx",
+      "loc": 21,
+      "kloc": 0.021,
+      "effort_pm": 0.04154717518270057,
+      "time_months": 0.746424316507368,
+      "cost_usd": 332.37740146160456
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\ServiceCard.jsx",
+      "loc": 22,
+      "kloc": 0.022,
+      "effort_pm": 0.04362697053813359,
+      "time_months": 0.7604084427776474,
+      "cost_usd": 349.01576430506867
+    },
+    {
+      "file": "HealthCare_App\\src\\Components\\ThirdCard.jsx",
+      "loc": 17,
+      "kloc": 0.017,
+      "effort_pm": 0.033279945710740104,
+      "time_months": 0.6860715338339579,
+      "cost_usd": 266.2395656859208
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\About.jsx",
+      "loc": 119,
+      "kloc": 0.119,
+      "effort_pm": 0.25676483861803484,
+      "time_months": 1.491294850131928,
+      "cost_usd": 2054.1187089442788
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\AddToQueue.jsx",
+      "loc": 278,
+      "kloc": 0.278,
+      "effort_pm": 0.6258327374212389,
+      "time_months": 2.0921564328779283,
+      "cost_usd": 5006.661899369911
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Contact.jsx",
+      "loc": 251,
+      "kloc": 0.251,
+      "effort_pm": 0.5621712728878263,
+      "time_months": 2.008584446448533,
+      "cost_usd": 4497.37018310261
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Dashboard.jsx",
+      "loc": 244,
+      "kloc": 0.244,
+      "effort_pm": 0.5457208656588495,
+      "time_months": 1.9860437958021004,
+      "cost_usd": 4365.766925270796
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Home.jsx",
+      "loc": 14,
+      "kloc": 0.014,
+      "effort_pm": 0.027142239552050793,
+      "time_months": 0.6349292969154976,
+      "cost_usd": 217.13791641640634
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Layout.jsx",
+      "loc": 12,
+      "kloc": 0.012,
+      "effort_pm": 0.02308615196385212,
+      "time_months": 0.5970539799622495,
+      "cost_usd": 184.68921571081694
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Loading.jsx",
+      "loc": 15,
+      "kloc": 0.015,
+      "effort_pm": 0.029181463164703193,
+      "time_months": 0.6526505267813634,
+      "cost_usd": 233.45170531762554
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Login.jsx",
+      "loc": 234,
+      "kloc": 0.234,
+      "effort_pm": 0.5222613559763993,
+      "time_months": 1.9531581386402257,
+      "cost_usd": 4178.090847811195
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\NotFound.jsx",
+      "loc": 17,
+      "kloc": 0.017,
+      "effort_pm": 0.033279945710740104,
+      "time_months": 0.6860715338339579,
+      "cost_usd": 266.2395656859208
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Profile.jsx",
+      "loc": 148,
+      "kloc": 0.148,
+      "effort_pm": 0.32283903677631715,
+      "time_months": 1.626876946101501,
+      "cost_usd": 2582.712294210537
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\QueuePage.jsx",
+      "loc": 299,
+      "kloc": 0.299,
+      "effort_pm": 0.6755632081848332,
+      "time_months": 2.1538382467123194,
+      "cost_usd": 5404.505665478666
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Register.jsx",
+      "loc": 129,
+      "kloc": 0.129,
+      "effort_pm": 0.27946693861186644,
+      "time_months": 1.5400881346729727,
+      "cost_usd": 2235.7355088949316
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\ResetPassword.jsx",
+      "loc": 53,
+      "kloc": 0.053,
+      "effort_pm": 0.10982492232878678,
+      "time_months": 1.0799567232431033,
+      "cost_usd": 878.5993786302943
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Services.jsx",
+      "loc": 53,
+      "kloc": 0.053,
+      "effort_pm": 0.10982492232878678,
+      "time_months": 1.0799567232431033,
+      "cost_usd": 878.5993786302943
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\Settings.jsx",
+      "loc": 78,
+      "kloc": 0.078,
+      "effort_pm": 0.16478230537754193,
+      "time_months": 1.2599868918352457,
+      "cost_usd": 1318.2584430203356
+    },
+    {
+      "file": "HealthCare_App\\src\\Pages\\VideoCall.jsx",
+      "loc": 398,
+      "kloc": 0.398,
+      "effort_pm": 0.9121966382535073,
+      "time_months": 2.4142021162364173,
+      "cost_usd": 7297.573106028059
+    },
+    {
+      "file": "HealthCare_App\\src\\Server\\Cloudinary.js",
+      "loc": 26,
+      "kloc": 0.026,
+      "effort_pm": 0.051991608903884746,
+      "time_months": 0.812820496297292,
+      "cost_usd": 415.93287123107797
+    },
+    {
+      "file": "HealthCare_App\\src\\Server\\Server.js",
+      "loc": 204,
+      "kloc": 0.204,
+      "effort_pm": 0.45219204455940176,
+      "time_months": 1.84910987249663,
+      "cost_usd": 3617.5363564752142
+    },
+    {
+      "file": "HealthCare_App\\src\\Store\\zustand.js",
+      "loc": 16,
+      "kloc": 0.016,
+      "effort_pm": 0.031227500465247155,
+      "time_months": 0.6696751036919388,
+      "cost_usd": 249.82000372197723
+    }
+  ]
+}

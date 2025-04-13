@@ -1,0 +1,10 @@
+COCOMO II Model Analysis - System Summary
+==================================================
+
+Total Files: 70
+Total Lines of Code: 5109
+Total KLOC: 5.11
+Project Category: organic
+Development Effort: 13.30 person-months
+Development Time: 6.68 months
+Development Cost: $106,427.52
