@@ -13,6 +13,25 @@ import http from 'http';
 import { getChatMessages, getQueueData, addChatMessage } from './src/controllers/queue.controller.js';
 import bodyParser from 'body-parser';
 
+import AdminJS from 'adminjs'
+import AdminJSExpress from '@adminjs/express'
+import * as AdminJSMongoose from '@adminjs/mongoose'
+import { Queue } from './src/models/queue.model.js';
+import { User } from './src/models/user.model.js';
+import { Chat } from './src/models/Chat.model.js';
+
+
+
+AdminJS.registerAdapter({
+    Resource: AdminJSMongoose.Resource,
+    Database: AdminJSMongoose.Database,
+})
+
+const adminOptions = {
+    resources: [
+        Queue,User,Chat
+    ],
+}
 
 const app = express();
 export const server = http.createServer(app);
@@ -30,22 +49,24 @@ app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true,
 }));
-app.set("trust proxy", 1);
 
+const admin = new AdminJS(adminOptions)
+const adminRouter = AdminJSExpress.buildRouter(admin)
+app.use(admin.options.rootPath, adminRouter)
 
 // Sockets
 io.on("connection", (socket) => {
     console.log("User Connected", socket.id);
 
-    socket.on('user-joined', async ({userId,role}) => {
+    socket.on('user-joined', async ({ userId, role }) => {
         // console.log("User joined", userId, role);
         if (!userId) {
             console.error('Invalid userId received:', userId);
             return;
         }
-        
+
         // Only update if socketId is different
-        if(role=='Patient'){
+        if (role == 'Patient') {
             const existingSocket = await userOnline.getSocketIdByUserId(userId);
             if (existingSocket !== socket.id) {
                 await userOnline.addUser(userId, socket.id);
