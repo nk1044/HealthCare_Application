@@ -19,7 +19,7 @@ const formatTime = (timestamp) => {
     }
 };
 
-function ChatBox({ roomId, setShowChatBox, patientData }) {
+function ChatBox({ roomId, setShowChatBox, patientData }) {    
     const [chat, setChat] = useState([]);
     const userMessage = useRef(null);
     const fileInputRef = useRef(null);
@@ -225,7 +225,7 @@ function ChatBox({ roomId, setShowChatBox, patientData }) {
                 <div className="flex items-center space-x-2">
                     <span className={`h-3 w-3 rounded-full ${socketConnected ? "bg-green-400" : "bg-red-400"}`} />
                     <h3 className="font-medium text-sm sm:text-base">
-                        Chat with {patientData ? "Patient" : "Doctor"}
+                        Chat with {patientData ? `${patientData?.user?.name}` : "Doctor"}
                     </h3>
                 </div>
                 <div className="flex items-center space-x-2">

@@ -219,9 +219,6 @@ function QueuePage() {
                             </span>
                         </button>
                     </div>
-
-
-
                     {loading ? (
                         <div className="flex justify-center items-center p-12">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -253,19 +250,23 @@ function QueuePage() {
                                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTagColor(entry.tag)}`}>
                                                         {entry.tag}
                                                     </span>
-                                                    <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                        Waiting
+                                                    <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${entry.status === "online" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>  
+                                                        {entry.status === "online" ? "Online" : "Offline"}
                                                     </span>
                                                 </div>
-                                                <h3 className="text-base font-semibold text-gray-900 truncate">
+                                                {/* Name and Email on same line */}
+                                                <div className="flex flex-wrap items-center text-sm text-gray-700 font-medium truncate">
+                                                    <span>{entry.user?.name || "Unknown User"}</span>
+                                                    <span className="mx-2">•</span>
+                                                    <span className="text-gray-500">{entry.user?.email || "No email available"}</span>
+                                                </div>
+
+                                                {/* More prominent description */}
+                                                <p className="mt-2 text-[15px] text-gray-800 font-normal leading-snug line-clamp-3">
                                                     {entry.description || "No description provided"}
-                                                </h3>
-                                                <div className="mt-1 flex items-center">
-                                                    <span className="text-sm text-gray-500">
-                                                        Room ID: <span className="font-mono text-gray-600">{entry.roomID}</span>
-                                                    </span>
-                                                </div>
+                                                </p>
                                             </div>
+
                                         </div>
 
                                         <div className="flex-shrink-0 flex space-x-3 mt-4 md:mt-0">
@@ -297,11 +298,10 @@ function QueuePage() {
                                                 message="Do you really want to leave? This action cannot be undone."
                                                 onConfirm={() => {
                                                     if ({ Queue_Id: entry?.Queue_Id, userId: entry?.user }) {
-                                                        handleRemoveEntry({ Queue_Id: entry?.Queue_Id, userId: entry?.user });
+                                                        handleRemoveEntry({ Queue_Id: entry?.Queue_Id, userId: entry?.user._id });
                                                     }
                                                     setModalOpen(false);
-                                                    console.log({ Queue_Id: entry, userId: entry?.user });
-
+                                                    console.log({ Queue_Id: entry, userId: entry?.user._id });
                                                 }}
                                                 onCancel={() => setModalOpen(false)}
                                             />

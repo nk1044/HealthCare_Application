@@ -5,9 +5,9 @@ import { createChat, addMessage } from "./chat.controller.js";
 import { userOnline } from "../config/userOnline.js";
 
 const getQueueData = async () => {
-    const queue = await Queue.find();
+    const queue = await Queue.find().populate('Entries.user', 'name email avatar'); 
     if (!queue) {
-        return []; // or handle this case appropriately
+        return [];
     }
     const onlineUsers = await userOnline.getOnlineUsers();
     console.log("online users", onlineUsers);
@@ -24,7 +24,7 @@ const getQueueData = async () => {
                     description: e.description,
                     roomID: e.roomID,
                     chat: e.chat,
-                    status: onlineUsers[e.user] ? "online" : "offline",
+                    status: onlineUsers[e.user._id] ? "online" : "offline",
                     time: Date.now()
                 };
             })
