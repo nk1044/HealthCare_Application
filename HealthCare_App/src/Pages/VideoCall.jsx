@@ -367,7 +367,7 @@ const VideoCall = () => {
                 autoPlay
                 playsInline
                 ref={remoteVideoRef}
-                className="w-full h-full max-h-[70vh] max-w-4xl object-contain mx-auto"
+                className="w-full h-full max-h-[70vh] max-w-4xl transform scale-x-[-1] object-contain mx-auto"
                 style={{ aspectRatio: '16/9' }}
               />
             </div>
