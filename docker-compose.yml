@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  backend:
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile
+    image: docker.io/neerajkumar1044/health-care-application:01
+    restart: always
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env
+    environment:
+      MONGODB_URI: ${MONGODB_URI}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      REFRESH_TOKEN_EXPIRY: ${REFRESH_TOKEN_EXPIRY}
+      ACCESS_TOKEN_EXPIRY: ${ACCESS_TOKEN_EXPIRY}
+      FRONTEND_URL: ${FRONTEND_URL}
+      REDIS_URL: ${REDIS_URL}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      PORT: ${PORT}
+      ROOM_ID: ${ROOM_ID}
+      NODE_ENV: ${NODE_ENV}
+      ONLINE_USERS_KEY: ${ONLINE_USERS_KEY}
+
+    depends_on:
+      - database
+
+  frontend:
+    # build:
+    #   context: ./HealthCare_App
+    #   dockerfile: Dockerfile
+    image: docker.io/neerajkumar1044/telemedicine_frontend:latest
+    platform: linux/amd64
+    restart: always
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env
+    environment:
+      VITE_BACKEND_URI: ${VITE_BACKEND_URI}
+      VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID}
+
+  database:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: healthcare
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
